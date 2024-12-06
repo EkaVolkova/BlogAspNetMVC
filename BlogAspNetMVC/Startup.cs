@@ -1,6 +1,9 @@
+using BlogAspNetMVC.Data;
+using BlogAspNetMVC.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +26,16 @@ namespace BlogAspNetMVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // регистрация сервисов репозитория для взаимодействия с базой данных
+            services.AddSingleton<IArticleRepository, ArticleRepository>();
+            services.AddSingleton<ICommentRepository, CommentRepository>();
+            services.AddSingleton<ITagRepository, TagRepository>();
+            services.AddSingleton<IUserRepository, UserRepository>();
+
+            //Добавляем подключение к БД
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+
             services.AddControllersWithViews();
         }
 
