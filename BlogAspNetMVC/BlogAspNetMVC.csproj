@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlogAspNetMVC.BusinessLogic\BlogAspNetMVC.BusinessLogic.csproj" />
     <ProjectReference Include="..\BlogAspNetMVC.Data\BlogAspNetMVC.Data.csproj" />
   </ItemGroup>
 
