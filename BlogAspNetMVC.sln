@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogAspNetMVC", "BlogAspNet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogAspNetMVC.Data", "BlogAspNetMVC.Data\BlogAspNetMVC.Data.csproj", "{DFB4F460-EB5B-4686-BB16-9295EF973BA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogAspNetMVC.BusinessLogic", "BlogAspNetMVC.BusinessLogic\BlogAspNetMVC.BusinessLogic.csproj", "{201404AD-D980-4F26-8865-38B9DF07FC25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DFB4F460-EB5B-4686-BB16-9295EF973BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB4F460-EB5B-4686-BB16-9295EF973BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFB4F460-EB5B-4686-BB16-9295EF973BA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{201404AD-D980-4F26-8865-38B9DF07FC25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{201404AD-D980-4F26-8865-38B9DF07FC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{201404AD-D980-4F26-8865-38B9DF07FC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{201404AD-D980-4F26-8865-38B9DF07FC25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
