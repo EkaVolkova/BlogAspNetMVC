@@ -30,6 +30,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Добавить статью
+        /// </summary>
+        /// <param name="addNewArticleRequest">Модель запроса на добавление статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> AddArticle(AddNewArticleRequest addNewArticleRequest)
         {
             var article = await _articleRepository.GetByName(addNewArticleRequest.Name);
@@ -65,6 +70,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             await _articleRepository.Create(article, user, tags);
             return new ObjectResult($"Статья {article.Name} создана") { StatusCode = 200 };
         }
+
+        /// <summary>
+        /// Изменить статью
+        /// </summary>
+        /// <param name="changeArticleRequest">Модель запроса на обновление статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> ChangeArticle(ChangeArticleRequest changeArticleRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleRequest.OldName);
@@ -92,6 +103,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             await _articleRepository.UpdateArticle(article, query);
             return new ObjectResult($"Статья {article.Name} обновлена") { StatusCode = 200 };
         }
+
+        /// <summary>
+        /// Изменить теги
+        /// </summary>
+        /// <param name="changeArticleTagsRequest">Модель запроса на обновление тегов статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> ChangeArticleTags(ChangeArticleTagsRequest changeArticleTagsRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleTagsRequest.Name);
@@ -119,6 +136,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             return new ObjectResult($"Статья {article.Name} обновлена") { StatusCode = 200 };
         }
 
+        /// <summary>
+        /// Удалить статью
+        /// </summary>
+        /// <param name="guid">Идентификатор статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> DeleteArticle(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
@@ -128,6 +150,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             await _articleRepository.DeleteArticle(article);
             return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
         }
+
+        /// <summary>
+        /// Удалить статью
+        /// </summary>
+        /// <param name="name">Название статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> DeleteArticle(string name)
         {
             var article = await _articleRepository.GetByName(name);
@@ -139,6 +167,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
 
         }
+
+        /// <summary>
+        /// Получить список всех статей
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> GetAllArticles()
         {
             var articles = await _articleRepository.GetAllArticles();
@@ -147,6 +180,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             return new ObjectResult(articles) { StatusCode = 200 };
         }
+
+        /// <summary>
+        /// Получить статью 
+        /// </summary>
+        /// <param name="name">Название статьи/param>
+        /// <returns></returns>
         public async Task<IActionResult> GetArticleByName(string name)
         {
             var article = await _articleRepository.GetByName(name);
@@ -155,6 +194,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             
             return new ObjectResult(article) { StatusCode = 200 };
         }
+
+        /// <summary>
+        /// Получить статью
+        /// </summary>
+        /// <param name="guid">Идентификатор статьи</param>
+        /// <returns></returns>
         public async Task<IActionResult> GetArticleById(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
@@ -164,6 +209,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             return new ObjectResult(article) { StatusCode = 200 };
         }
 
+        /// <summary>
+        /// Получить список статей пользователя
+        /// </summary>
+        /// <param name="userName">UserName пользователя</param>
+        /// <returns></returns>
         public async Task<IActionResult> GetArticlesByUserName(string userName)
         {
             var allArticles = await _articleRepository.GetAllArticles();
@@ -175,6 +225,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
 
         }
+
+        /// <summary>
+        /// Получить список статей пользователя
+        /// </summary>
+        /// <param name="guid">Идентификатор пользователя</param>
+        /// <returns></returns>
         public async Task<IActionResult> GetArticlesByAuthorId(Guid guid)
         {
             var allArticles = await _articleRepository.GetAllArticles();
