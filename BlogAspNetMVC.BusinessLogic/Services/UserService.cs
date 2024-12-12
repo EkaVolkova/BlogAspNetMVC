@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
@@ -31,9 +32,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> ChangeRole(ChangeUserRoleRequest changeUserRoleRequest)
         {
             var user = await _userRepository.GetByUserName(changeUserRoleRequest.UserName);
+            //если пользователь не найден
             if (user is null)
             {
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserRoleRequest.UserName} не найден");
             }
 
             var query = _mapper.Map<ChangeUserRoleRequest, UpdateUserQuery>(changeUserRoleRequest);
@@ -55,14 +57,15 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
         {
             var user = await _userRepository.GetByUserName(changePasswordRequest.UserName);
+            //если пользователь не найден
             if (user is null)
             {
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changePasswordRequest.UserName} не найден");
             }
 
             if (user.Password != changePasswordRequest.OldPassword)
             {
-                return new ObjectResult("Неверный пароль") { StatusCode = 401 };
+                throw new UserPasswordIsWrong("Неверный пароль");
             }
 
             var query = _mapper.Map<ChangePasswordRequest, UpdateUserQuery>(changePasswordRequest);
@@ -84,9 +87,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> ChangeUserName(ChangeUserNameRequest changeUserNameRequest)
         {
             var user = await _userRepository.GetByUserName(changeUserNameRequest.OldUserName);
+            //если пользователь не найден
             if (user is null)
             {
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserNameRequest.OldUserName} не найден");
             }
 
 
@@ -124,8 +128,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetById(Guid guid)
         {
             var user = await _userRepository.GetById(guid);
+            //если пользователь не найден
             if (user is null)
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с Id {guid} не найден");
             
             var userView = _mapper.Map<User, UserViewModel>(user);
 
@@ -141,8 +146,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetByUserName(string name)
         {
             var user = await _userRepository.GetByUserName(name);
+            //если пользователь не найден
             if (user is null)
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+            {
+                throw new UserNotFoundException($"Пользователь с именем пользователя {name} не найден");
+            }
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
@@ -158,9 +166,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> SignIn(SignInRequest signInRequest)
         {
             var user = await _userRepository.GetByUserName(signInRequest.UserName);
+            //если пользователь не найден
             if (user is null)
             {
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с именем пользователя {signInRequest.UserName} не найден");
             }
 
             if (user.Password != signInRequest.Password)
@@ -180,9 +189,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> SignUp(SignUpRequest signUpRequest)
         {
             var user = await _userRepository.GetByUserName(signUpRequest.UserName);
+            //если пользователь уже существует
             if (!(user is null))
             {
-                return new ObjectResult("Пользователь с таким именем уже существует") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь с именем пользователя {signUpRequest.UserName} уже существует");
             }
 
             user = _mapper.Map<SignUpRequest, User>(signUpRequest);

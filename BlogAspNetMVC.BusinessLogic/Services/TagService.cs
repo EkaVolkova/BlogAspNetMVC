@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogAspNetMVC.BusinessLogic.Exceptions.TagExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
@@ -33,9 +34,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> AddTag(AddNewTagRequest addNewTagRequest)
         {
             var tag = await _tagRepository.GetByName(addNewTagRequest.Name);
+            //если тег уже был добавлен
             if (!(tag is null))
-                return new ObjectResult($"Тег с названием \"{addNewTagRequest.Name}\" уже существует") { StatusCode = 400 };
-
+                throw new TagAlreadyExistException($"Тег с названием \"{addNewTagRequest.Name}\" уже существует");
 
 
             tag = _mapper.Map<AddNewTagRequest, Tag>(addNewTagRequest);
@@ -54,16 +55,17 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <returns></returns>
         public async Task<IActionResult> ChangeTag(ChangeTagRequest changeTagRequest)
         {
-            var tag = await _tagRepository.GetById(changeTagRequest.Id);
+            var tag = await _tagRepository.GetByName(changeTagRequest.OldName);
+            //если тег не найден
             if (tag is null)
-                return new ObjectResult($"Тег с Id \"{changeTagRequest.Id}\" не найден") { StatusCode = 400 };
+                throw new TagNotFoundException($"Тег с названием \"{changeTagRequest.OldName}\" не найден");
 
 
             var query = _mapper.Map<ChangeTagRequest, UpdateTagQuery>(changeTagRequest);
 
             await _tagRepository.UpdateTag(tag, query);
 
-            tag = await _tagRepository.GetById(changeTagRequest.Id);
+            tag = await _tagRepository.GetByName(changeTagRequest.NewName);
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 
@@ -78,8 +80,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> DeleteTag(Guid guid)
         {
             var tag = await _tagRepository.GetById(guid);
+            //если тег не найден
             if (tag is null)
-                return new ObjectResult($"Тег с Id \"{guid}\" не найден") { StatusCode = 400 };
+                throw new TagNotFoundException($"Тег с Id \"{guid}\" не найден");
 
             await _tagRepository.DeleteTag(tag);
             return new ObjectResult($"Тег с Id {guid} удален") { StatusCode = 200 };
@@ -106,8 +109,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetTagById(Guid guid)
         {
             var tag = await _tagRepository.GetById(guid);
+            //если тег не найден
             if (tag is null)
-                return new ObjectResult($"Тег с Id \"{guid}\" не найден") { StatusCode = 400 };
+                throw new TagNotFoundException($"Тег с Id \"{guid}\" не найден");
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 

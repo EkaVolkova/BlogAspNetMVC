@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BlogAspNetMVC.BusinessLogic.Exceptions.ArticleExceptions;
+using BlogAspNetMVC.BusinessLogic.Exceptions.TagExceptions;
+using BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
 using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
@@ -39,15 +42,18 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> AddArticle(AddNewArticleRequest addNewArticleRequest)
         {
             var article = await _articleRepository.GetByName(addNewArticleRequest.Name);
+
+            //Если статья с аналогичным названием уже существует, ее нельзя добавить
             if (!(article is null))
             {
-                return new ObjectResult("Статья с таким названием уже существует") { StatusCode = 400 };
+                throw new ArticleAlreadyExistException($"Статья с названием {addNewArticleRequest.Name} уже существует");
             }
 
             var user = await _userRepository.GetById(addNewArticleRequest.AuthorId);
+            //Если автора статьи не существует, то статью нельзя добавить
             if(user is null)
             {
-                return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+                throw new UserNotFoundException($"Пользователь c Id {addNewArticleRequest.AuthorId} не найден");
             }
 
             List<Tag> tags = new List<Tag>();
@@ -58,8 +64,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 {
                     var tempTag = await _tagRepository.GetByName(tag);
 
+                    //Если тега не существует, то его нельзя добавить
                     if(tempTag is null)
-                        return new ObjectResult("Тег не найден") { StatusCode = 400 };
+                        throw new TagNotFoundException($"Тег c тестом {tag} не найден");
 
                     tags.Add(tempTag);
 
@@ -85,8 +92,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> ChangeArticle(ChangeArticleRequest changeArticleRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleRequest.OldName);
-            if(article is null)
-                return new ObjectResult($"Статья с названием \"{changeArticleRequest.OldName}\" не найдена") { StatusCode = 400 };
+            //Если статьи не существует, статью нельзя изменить
+            if (article is null)
+                throw new ArticleNotFoundException($"Статья с названием {changeArticleRequest.OldName} не найдена");
 
             List<Tag> tags = new List<Tag>();
 
@@ -96,8 +104,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 {
                     var tempTag = await _tagRepository.GetByName(tag);
 
+                    //Если тега не существует, статью нельзя изменить
                     if (tempTag is null)
-                        return new ObjectResult($"Тег {tag} не найден") { StatusCode = 400 };
+                        throw new TagNotFoundException($"Тег c тестом {tag} не найден");
 
                     tags.Add(tempTag);
 
@@ -123,8 +132,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> ChangeArticleTags(ChangeArticleTagsRequest changeArticleTagsRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleTagsRequest.Name);
+            //Если статьи не существует, статью нельзя изменить
             if (article is null)
-                return new ObjectResult($"Статья с названием \"{changeArticleTagsRequest.Name}\" не найдена") { StatusCode = 400 };
+                throw new ArticleNotFoundException($"Статья с названием {changeArticleTagsRequest.Name} не найдена");
 
             List<Tag> tags = new List<Tag>();
 
@@ -134,8 +144,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 {
                     var tempTag = await _tagRepository.GetByName(tag);
 
+                    //Если тега не существует, статью нельзя изменить
                     if (tempTag is null)
-                        return new ObjectResult($"Тег {tag} не найден") { StatusCode = 400 };
+                        throw new TagNotFoundException($"Тег c тестом {tag} не найден");
 
                     tags.Add(tempTag);
 
@@ -160,9 +171,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> DeleteArticle(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
+
+            //Если статьи не существует, статью нельзя удалить
             if (article is null)
-                return new ObjectResult($"Статья с идентификатором \"{guid}\" не найдена") { StatusCode = 400 };
-            
+                throw new ArticleNotFoundException($"Статья с Id {guid} не найдена");
+
             await _articleRepository.DeleteArticle(article);
             return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
         }
@@ -176,9 +189,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         {
             var article = await _articleRepository.GetByName(name);
 
+            //Если статьи не существует, статью нельзя удалить
             if (article is null)
-                return new ObjectResult($"Статья с названием \"{name}\" не найдена") { StatusCode = 400 };
-            
+                throw new ArticleNotFoundException($"Статья с названием {name} не найдена");
+
             await _articleRepository.DeleteArticle(article);
             return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
 
@@ -205,8 +219,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetArticleByName(string name)
         {
             var article = await _articleRepository.GetByName(name);
+
+            //Если статьи не существует
             if (article is null)
-                return new ObjectResult($"Статья с именем \"{name}\" не найдена") { StatusCode = 400 };
+                throw new ArticleNotFoundException($"Статья с названием {name} не найдена");
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
@@ -221,8 +237,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetArticleById(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
+
+            //Если статьи не существует
             if (article is null)
-                return new ObjectResult($"Статья с именем \"{guid}\" не найдена") { StatusCode = 400 };
+                throw new ArticleNotFoundException($"Статья с Id {guid} не найдена");
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 

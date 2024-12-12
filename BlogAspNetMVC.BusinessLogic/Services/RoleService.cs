@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogAspNetMVC.BusinessLogic.Exceptions.RoleExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
@@ -30,10 +31,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <returns></returns>
         public async Task<IActionResult> AddRole(AddNewRoleRequest addNewRoleRequest)
         {
-            var role = await _roleRepository.GetById(addNewRoleRequest.Guid);
+            var role = await _roleRepository.GetByName(addNewRoleRequest.Name);
+            //если роли уже существует
             if (!(role is null))
-                return new ObjectResult($"Роль с Id \"{addNewRoleRequest.Guid}\" не найдена") { StatusCode = 400 };
-
+                throw new RoleAlreadyExistException($"Роль с названием \"{addNewRoleRequest.Name}\" уже существует");
 
 
             role = _mapper.Map<AddNewRoleRequest, Role>(addNewRoleRequest);
@@ -50,14 +51,15 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <returns></returns>
         public async Task<IActionResult> ChangeRole(ChangeRoleRequest changeRoleRequest)
         {
-            var role = await _roleRepository.GetById(changeRoleRequest.Id);
+            var role = await _roleRepository.GetByName(changeRoleRequest.OldName);
+            //Если роли не существует
             if (role is null)
-                return new ObjectResult($"Роль с Id \"{changeRoleRequest.Id}\" не найдена") { StatusCode = 400 };
+                throw new RoleNotFoundException($"Роль с названием \"{changeRoleRequest.OldName}\" не найдена");
 
 
             var query = _mapper.Map<ChangeRoleRequest, UpdateRoleQuery>(changeRoleRequest);
             await _roleRepository.UpdateRole(role, query);
-            return new ObjectResult($"Роль с Id {changeRoleRequest.Id} обновлена") { StatusCode = 200 };
+            return new ObjectResult($"Название роли \"{changeRoleRequest.OldName}\" изменено на \"{changeRoleRequest.NewName}\"") { StatusCode = 200 };
 
         }
 
@@ -69,8 +71,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> DeleteRole(Guid guid)
         {
             var role = await _roleRepository.GetById(guid);
+            //Если роли не существует
             if (role is null)
-                return new ObjectResult($"Роль с Id \"{guid}\" не найдена") { StatusCode = 400 };
+                throw new RoleNotFoundException($"Роль с Id \"{guid}\" не найдена");
+
 
             await _roleRepository.DeleteRole(role);
             return new ObjectResult($"Роль с Id {guid} удалена") { StatusCode = 200 };
@@ -97,8 +101,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetRoleById(Guid guid)
         {
             var role = await _roleRepository.GetById(guid);
+            //Если роли не существует
             if (role is null)
-                return new ObjectResult($"Роль с Id \"{guid}\" не найдена") { StatusCode = 400 };
+                throw new RoleNotFoundException($"Роль с Id \"{guid}\" не найдена");
 
             return new ObjectResult(role) { StatusCode = 200 };
         }
@@ -125,8 +130,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         public async Task<IActionResult> GetAllUsersByRoleId(Guid guid)
         {
             var role = await _roleRepository.GetById(guid);
+            //Если роли не существует
             if (role is null)
-                return new ObjectResult($"Роль с Id \"{guid}\" не найдена") { StatusCode = 400 };
+                throw new RoleNotFoundException($"Роль с Id \"{guid}\" не найдена");
 
             if (role.Users is null || role.Users.Count == 0)
                 return new ObjectResult($"Нет пользователей роли {guid}") { StatusCode = 400 };
