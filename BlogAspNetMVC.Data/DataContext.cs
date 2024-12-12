@@ -26,9 +26,14 @@ namespace BlogAspNetMVC.Data
         public DbSet<Tag> Tags { get; set; }
 
         /// <summary>
-        /// Dataset для комментариев
+        /// Dataset для пользователей
         /// </summary>
         public DbSet<User> Users { get; set; }
+
+        /// <summary>
+        /// Dataset для ролей пользователя
+        /// </summary>
+        public DbSet<Role> Roles { get; set; }
 
         /// <summary>
         /// Создание базы данных, если ее нет
@@ -36,6 +41,7 @@ namespace BlogAspNetMVC.Data
         /// <param name="options"></param>
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -49,6 +55,7 @@ namespace BlogAspNetMVC.Data
             modelBuilder.Entity<Comment>().ToTable("Comments");
             modelBuilder.Entity<Tag>().ToTable("Tags");
             modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<Role>().ToTable("Roles");
         }
     }
 }

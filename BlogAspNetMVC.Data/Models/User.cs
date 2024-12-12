@@ -45,5 +45,15 @@ namespace BlogAspNetMVC.Data.Models
         /// Навигационное свойство: список всех статей, написанных пользователем
         /// </summary>
         public List<Article> Articles { get; set; }
+
+        /// <summary>
+        /// Навигационное свойство id роли пользователя
+        /// </summary>
+        public Guid RoleId { get; set; }
+
+        /// <summary>
+        /// Навигационное свойство: Роль пользователя
+        /// </summary>
+        public Role Role { get; set; }
     }
 }
