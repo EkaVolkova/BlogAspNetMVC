@@ -1,4 +1,5 @@
 ﻿using BlogAspNetMVC.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 
@@ -21,11 +22,17 @@ namespace BlogAspNetMVC.Data.Queries
         /// </summary>
         public string NewEmail { get; set; }
 
-        public UpdateUserQuery(string newName = null, string newPassword = null, string newEmail = null)
+        /// <summary>
+        /// Новое название роли
+        /// </summary>
+        public string NewRoleName { get; set; }
+
+        public UpdateUserQuery(string newName = null, string newPassword = null, string newEmail = null, string newRoleName = null)
         {
             NewName = newName;
             NewPassword = newPassword;
             NewEmail = newEmail;
+            NewRoleName = newRoleName;
         }
     }
 
