@@ -12,9 +12,11 @@ namespace BlogAspNetMVC.Data.Repositories
     public class UserRepository : IUserRepository
     {
         DataContext _context;
-        public UserRepository(DataContext context)
+        IRoleRepository _roleRepository;
+        public UserRepository(DataContext context, IRoleRepository roleRepository)
         {
             _context = context;
+            _roleRepository = roleRepository;
         }
 
         /// <summary>
@@ -32,6 +34,19 @@ namespace BlogAspNetMVC.Data.Repositories
             //Добавляем ссылки на статьи и комментарии
             user.Articles = articles;
             user.Comments = comments;
+
+            //Получаем модель роли пользователя
+            //Все пользователи создаются с доступом "user"
+            var role = await _roleRepository.GetByName("user");
+
+            if (role is null)
+            {
+                //Если роли user еще нет в базе, создадим ее
+                user.Role = new Role { Name = "user" };
+                await _roleRepository.Create(user.Role);
+            }
+            else
+                user.Role = role;
 
             //Добавляем статью в асинхронном режиме
             var entry = _context.Entry(user);
@@ -52,6 +67,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем пользователя вместе со всеми связанными сущностями
             return await _context.Users.Include(a => a.Articles)
                                           .Include(a => a.Comments)
+                                          .Include(a => a.Role)
                                           .Where(a => a.Id == guid)
                                           .FirstOrDefaultAsync();
         }
@@ -66,6 +82,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем пользователя вместе со всеми связанными сущностями
             return await _context.Users.Include(a => a.Articles)
                                           .Include(a => a.Comments)
+                                          .Include(a => a.Role)
                                           .Where(a => a.UserName == userName)
                                           .FirstOrDefaultAsync();
         }
@@ -80,6 +97,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем пользователя вместе со всеми связанными сущностями
             return await _context.Users.Include(a => a.Articles)
                                           .Include(a => a.Comments)
+                                          .Include(a => a.Role)
                                           .Where(a => a.Email == email)
                                           .FirstOrDefaultAsync();
         }
@@ -93,6 +111,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем пользователей вместе со всеми связанными сущностями
             return await _context.Users.Include(a => a.Articles)
                                           .Include(a => a.Comments)
+                                          .Include(a => a.Role)
                                           .ToListAsync();
         }
 
@@ -117,6 +136,17 @@ namespace BlogAspNetMVC.Data.Repositories
             if (!(updateUserQuery.NewEmail is null))
                 user.Email = updateUserQuery.NewEmail;
 
+            //Проверяем, есть ли новая роль, если да, то записываем новую
+            if (!(updateUserQuery.NewRoleName is null))
+            {
+                
+                var role = await _roleRepository.GetByName(updateUserQuery.NewRoleName);
+                if (!(role is null))
+                {
+                    user.Role = role;
+                    user.RoleId = role.Id;
+                }
+            }
             //Добавляем пользователя в асинхронном режиме
             var entry = _context.Entry(user);
             if (entry.State == EntityState.Detached)
