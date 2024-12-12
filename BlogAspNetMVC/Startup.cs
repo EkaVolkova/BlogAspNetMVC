@@ -1,3 +1,4 @@
+using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.Data;
 using BlogAspNetMVC.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC
@@ -32,11 +35,26 @@ namespace BlogAspNetMVC
             services.AddSingleton<ITagRepository, TagRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
 
+            // регистрация сервисов для бизнес-логики
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IArticleService, ArticleService>();
+            services.AddSingleton<ICommentService, CommentService>();
+            services.AddSingleton<ITagService, TagService>();
+
+            // Добавляем автомаппер
+            var assembly = Assembly.GetAssembly(typeof(MappingProfile));
+            services.AddAutoMapper(assembly);
+
             //Добавляем подключение к БД
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                //добавляем параметры автосериализации для избежания ошибки object cycle
+                .AddJsonOptions(o => o.JsonSerializerOptions
+                 .ReferenceHandler = ReferenceHandler.Preserve);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
