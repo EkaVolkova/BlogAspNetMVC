@@ -29,6 +29,8 @@ namespace BlogAspNetMVC
             CreateMap<ChangePasswordRequest, UpdateUserQuery>();
             CreateMap<ChangeArticleRequest, UpdateArticleQuery>();
             CreateMap<ChangeCommentRequest, UpdateCommentQuery>();
+            CreateMap<ChangeRoleRequest, UpdateRoleQuery>();
+            CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
 
         }
     }
