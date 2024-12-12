@@ -2,6 +2,7 @@
 using BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +13,7 @@ namespace BlogAspNetMVC.Controllers
     /// <summary>
     /// Контроллер для работы со статьей
     /// </summary>
+    [AllowAnonymous]
     [Route("[controller]")]
     public class ArticleController : Controller
     {

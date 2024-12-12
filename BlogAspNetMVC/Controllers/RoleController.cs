@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +11,7 @@ namespace BlogAspNetMVC.Controllers
     /// <summary>
     /// Контроллер для работы с ролью
     /// </summary>
+    [Authorize(Roles = "admin")]
     [Route("[controller]")]
     public class RoleController : Controller
     {

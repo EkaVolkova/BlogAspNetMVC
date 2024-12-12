@@ -2,6 +2,7 @@
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.Data.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,6 +29,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="request">Модель запроса на изменение пароля</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator, user")]
         [HttpPut]
         [Route("ChangePassword")]
         public async Task<IActionResult> ChangePassword(
@@ -53,6 +55,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="request">Модель запроса на изменение UserName</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator, user")]
         [HttpPut]
         [Route("ChangeUserName")]
         public async Task<IActionResult> ChangeUserName(
@@ -77,6 +80,7 @@ namespace BlogAspNetMVC.Controllers
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator, user")]
         [HttpGet]
         [Route("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
@@ -98,6 +102,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator, user")]
         [HttpGet]
         [Route("GetUserById{id}")]
         public async Task<IActionResult> GetUserById(

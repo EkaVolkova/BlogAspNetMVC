@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
 {
+    
     [Route("[controller]")]
     public class TagController : Controller
     {
@@ -24,6 +26,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewTagRequest">Модель запроса на добавление тега</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator")]
         [HttpPost]
         [Route("CreateNewTag")]
         public async Task<IActionResult> CreateNewTag(
@@ -48,6 +51,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator")]
         [HttpPut]
         [Route("ChangeTag")]
         public async Task<IActionResult> ChangeTag(
@@ -72,6 +76,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор тега</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator")]
         [HttpDelete]
         [Route("DeleteTag{guid}")]
         public async Task<IActionResult> DeleteTag(
@@ -94,6 +99,7 @@ namespace BlogAspNetMVC.Controllers
         /// Получить список всех тегов
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetAllTags")]
         public async Task<IActionResult> GetAllTags()
@@ -116,6 +122,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор тега</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetTagById{guid}")]
         public async Task<IActionResult> GetTagById(
@@ -139,6 +146,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetTagsByArtcleId{guid}")]
         public async Task<IActionResult> GetTagsByArtcleId(
@@ -162,6 +170,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="name">Название статьи</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetTagByArtcleName{name}")]
         public async Task<IActionResult> GetTagByArtcleName(

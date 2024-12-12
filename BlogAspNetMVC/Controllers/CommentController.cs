@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
 {
+    [Authorize(Roles = "admin, moderator, user")]//доступ к комментариям только для авторизованных пользователей
     [Route("[controller]")]
     public class CommentController : Controller
     {

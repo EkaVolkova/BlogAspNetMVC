@@ -6,6 +6,7 @@ using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -69,6 +70,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="request">Запрос на вход</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("SignIn")]
         public async Task<IActionResult> SignIn(
@@ -95,6 +97,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="request">Запрос на регистрацию</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public async Task<IActionResult> SignUp(
