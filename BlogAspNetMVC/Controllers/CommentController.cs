@@ -179,8 +179,8 @@ namespace BlogAspNetMVC.Controllers
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetCommentsByArtcleId{guid}")]
-        public async Task<IActionResult> GetCommentsByArtcleId(
+        [Route("GetCommentsByArticleId{guid}")]
+        public async Task<IActionResult> GetCommentsByArticleId(
             [FromRoute] Guid guid)
         {
             try
