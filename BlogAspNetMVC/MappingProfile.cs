@@ -21,23 +21,49 @@ namespace BlogAspNetMVC
         /// </summary>
         public MappingProfile()
         {
+            RequestToDbModelCreateMap();
+            RequestToDbQueryCreateMap();
+            DbModelToBusinessViewModelCreateMap();
+        }
+
+        /// <summary>
+        /// Создание маппера для преобразования модели запроса из бизнес-логики в Модель базы данных
+        /// </summary>
+        private void RequestToDbModelCreateMap()
+        {
             CreateMap<SignUpRequest, User>();
             CreateMap<AddNewArticleRequest, Article>();
             CreateMap<AddNewCommentRequest, Comment>();
             CreateMap<AddNewTagRequest, Tag>();
             CreateMap<AddNewRoleRequest, Role>();
+
+        }
+
+        /// <summary>
+        /// Создание маппера для преобразования модели запроса из бизнес-логики в модель запроса для базы данных
+        /// </summary>
+        private void RequestToDbQueryCreateMap()
+        {
             CreateMap<ChangeUserNameRequest, UpdateUserQuery>();
             CreateMap<ChangePasswordRequest, UpdateUserQuery>();
             CreateMap<ChangeArticleRequest, UpdateArticleQuery>();
             CreateMap<ChangeCommentRequest, UpdateCommentQuery>();
             CreateMap<ChangeRoleRequest, UpdateRoleQuery>();
+            CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
+        }
+
+        /// <summary>
+        /// Создание маппера для преобразования модели базы данных в бизнес-модель
+        /// </summary>
+        private void DbModelToBusinessViewModelCreateMap()
+        {
             CreateMap<User, UserViewModel>()
-                            .ForMember(uv => uv.CommentsId,
-                                    opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
-                            .ForMember(uv => uv.ArticlesId,
-                                    opt => opt.MapFrom(src => src.Articles.Select(c => c.Id).ToList()))
-                            .ForMember(uv => uv.RoleName,
-                                    opt => opt.MapFrom(src => src.Role.Name));
+                           .ForMember(uv => uv.CommentsId,
+                                   opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
+                           .ForMember(uv => uv.ArticlesId,
+                                   opt => opt.MapFrom(src => src.Articles.Select(c => c.Id).ToList()))
+                           .ForMember(uv => uv.RoleName,
+                                   opt => opt.MapFrom(src => src.Role.Name));
             CreateMap<Tag, TagViewModel>()
                 .ForMember(tv => tv.ArticlesId, opt => opt.MapFrom(src => src.Articles.Select(a => a.Id)));
             CreateMap<Article, ArticleViewModel>()
@@ -53,9 +79,6 @@ namespace BlogAspNetMVC
             CreateMap<Role, RoleViewModel>()
                 .ForMember(rv => rv.UsersId,
                         opt => opt.MapFrom(src => src.Users.Select(u => u.Id)));
-
-            CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
-
         }
     }
 }
