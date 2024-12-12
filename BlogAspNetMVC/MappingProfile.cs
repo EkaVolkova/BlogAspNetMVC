@@ -45,6 +45,11 @@ namespace BlogAspNetMVC
                         opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
                 .ForMember(uv => uv.TagsId,
                         opt => opt.MapFrom(src => src.Tags.Select(t => t.Id).ToList()));
+            CreateMap<Comment, CommentViewModel>()
+                .ForMember(cv => cv.AuthorId,
+                        opt => opt.MapFrom(src => src.Author.Id))
+                .ForMember(cv => cv.ParentCommentId,
+                        opt => opt.MapFrom(src => src.ParentComment.Id));
 
             CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
 
