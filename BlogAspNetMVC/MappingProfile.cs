@@ -40,6 +40,12 @@ namespace BlogAspNetMVC
                                     opt => opt.MapFrom(src => src.Role.Name));
             CreateMap<Tag, TagViewModel>()
                 .ForMember(tv => tv.ArticlesId, opt => opt.MapFrom(src => src.Articles.Select(a => a.Id)));
+            CreateMap<Article, ArticleViewModel>()
+                .ForMember(av => av.CommentsId,
+                        opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
+                .ForMember(uv => uv.TagsId,
+                        opt => opt.MapFrom(src => src.Tags.Select(t => t.Id).ToList()));
+
             CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
 
         }
