@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
@@ -41,7 +42,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             await _tagRepository.Create(tag, new List<Article>());
 
-            return new ObjectResult($"Тег {tag.Name} создан") { StatusCode = 200 };
+            var tagView = _mapper.Map<Tag, TagViewModel>(tag);
+
+            return new ObjectResult(tagView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -57,8 +60,14 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
 
             var query = _mapper.Map<ChangeTagRequest, UpdateTagQuery>(changeTagRequest);
+
             await _tagRepository.UpdateTag(tag, query);
-            return new ObjectResult($"Тег с Id {changeTagRequest.Id} обновлен") { StatusCode = 200 };
+
+            tag = await _tagRepository.GetById(changeTagRequest.Id);
+
+            var tagView = _mapper.Map<Tag, TagViewModel>(tag);
+
+            return new ObjectResult(tagView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -100,7 +109,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (tag is null)
                 return new ObjectResult($"Тег с Id \"{guid}\" не найден") { StatusCode = 400 };
 
-            return new ObjectResult(tag) { StatusCode = 200 };
+            var tagView = _mapper.Map<Tag, TagViewModel>(tag);
+
+            return new ObjectResult(tagView) { StatusCode = 200 };
         }
 
         /// <summary>
