@@ -34,12 +34,14 @@ namespace BlogAspNetMVC
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ITagRepository, TagRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IRoleRepository, RoleRepository>();
 
             // регистрация сервисов для бизнес-логики
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IArticleService, ArticleService>();
             services.AddSingleton<ICommentService, CommentService>();
             services.AddSingleton<ITagService, TagService>();
+            services.AddSingleton<IRoleService, RoleService>();
 
             // Добавляем автомаппер
             var assembly = Assembly.GetAssembly(typeof(MappingProfile));
