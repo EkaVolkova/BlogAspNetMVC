@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
@@ -41,7 +42,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             user = await _userRepository.GetByUserName(changeUserRoleRequest.UserName);
 
-            return new ObjectResult(user) { StatusCode = 200 };
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return new ObjectResult(userView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -65,7 +68,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             var query = _mapper.Map<ChangePasswordRequest, UpdateUserQuery>(changePasswordRequest);
 
             await _userRepository.UpdateUser(user, query);
-            return new ObjectResult("Пароль обновлен") { StatusCode = 200 };
+
+            user = await _userRepository.GetByUserName(changePasswordRequest.UserName);
+
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return new ObjectResult(userView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -84,7 +92,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var query = _mapper.Map<ChangeUserNameRequest, UpdateUserQuery>(changeUserNameRequest);
             await _userRepository.UpdateUser(user, query);
-            return new ObjectResult("Имя пользователя обновлено") { StatusCode = 200 };
+
+            user = await _userRepository.GetByUserName(changeUserNameRequest.NewUserName);
+
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return new ObjectResult(userView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -113,8 +126,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             var user = await _userRepository.GetById(guid);
             if (user is null)
                 return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
+            
+            var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(user) { StatusCode = 200 };
+            return new ObjectResult(userView) { StatusCode = 200 };
 
         }
 
@@ -129,7 +144,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (user is null)
                 return new ObjectResult("Пользователь не найден") { StatusCode = 400 };
 
-            return new ObjectResult(user) { StatusCode = 200 };
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return new ObjectResult(userView) { StatusCode = 200 };
 
         }
 
@@ -151,7 +168,8 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 return new ObjectResult("Неверный пароль") { StatusCode = 401 };
             }
 
-            return new ObjectResult("Вход успешен") { StatusCode = 200 };
+            var userView = _mapper.Map<User, UserViewModel>(user);
+            return new ObjectResult(userView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -173,7 +191,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             await _userRepository.Create(user, new List<Article>(), new List<Comment>());
 
-            return new ObjectResult("Пользователь зарегестрирован") { StatusCode = 200 };
+            user = await _userRepository.GetByUserName(signUpRequest.UserName);
+
+            var userView = _mapper.Map<User, UserViewModel>(user);
+            return new ObjectResult(userView) { StatusCode = 200 };
         }
     }
 }
