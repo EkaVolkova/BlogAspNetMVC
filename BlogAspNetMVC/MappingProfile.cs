@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
 using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
+using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.Data.Models;
@@ -23,6 +24,7 @@ namespace BlogAspNetMVC
             CreateMap<AddNewArticleRequest, Article>();
             CreateMap<AddNewCommentRequest, Comment>();
             CreateMap<AddNewTagRequest, Tag>();
+            CreateMap<AddNewRoleRequest, Role>();
             CreateMap<ChangeUserNameRequest, UpdateUserQuery>();
             CreateMap<ChangePasswordRequest, UpdateUserQuery>();
             CreateMap<ChangeArticleRequest, UpdateArticleQuery>();
