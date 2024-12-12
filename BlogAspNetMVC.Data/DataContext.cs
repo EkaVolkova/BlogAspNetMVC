@@ -41,7 +41,7 @@ namespace BlogAspNetMVC.Data
         /// <param name="options"></param>
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -56,6 +56,65 @@ namespace BlogAspNetMVC.Data
             modelBuilder.Entity<Tag>().ToTable("Tags");
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Role>().ToTable("Roles");
+
+            Guid adminGuid = Guid.NewGuid();
+            Guid userGuid = Guid.NewGuid();
+            Guid moderatorGuid = Guid.NewGuid();
+
+            //Создадим роли по умолчанию
+            var roles = new List<Role>
+            {
+                new Role
+                {
+                    Name = "admin",
+                    Id = adminGuid
+                },
+
+                new Role
+                {
+                    Name = "user",
+                    Id = userGuid
+                },
+                new Role
+                {
+                    Name = "moderator",
+                    Id = moderatorGuid
+                }
+            };
+            modelBuilder.Entity<Role>().HasData(roles);
+
+            //создадим пользователей по умолчанию
+            var users = new List<User>
+            {
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    RegistrationDate = DateTime.UtcNow,
+                    UserName = "admin",
+                    Password = "admin",
+                    Email = "admin@yandex.ru",
+                    RoleId = adminGuid
+                },
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    RegistrationDate = DateTime.UtcNow,
+                    UserName = "user1",
+                    Password = "user1",
+                    Email = "user1@yandex.ru",
+                    RoleId = userGuid
+                },
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    RegistrationDate = DateTime.UtcNow,
+                    UserName = "moderator",
+                    Password = "moderator",
+                    Email = "moderator@yandex.ru",
+                    RoleId = moderatorGuid
+                }
+            };
+            modelBuilder.Entity<User>().HasData(users);
         }
     }
 }
