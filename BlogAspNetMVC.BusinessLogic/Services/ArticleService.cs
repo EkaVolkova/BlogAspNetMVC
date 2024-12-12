@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
@@ -68,7 +69,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             article = _mapper.Map<AddNewArticleRequest, Article>(addNewArticleRequest);
 
             await _articleRepository.Create(article, user, tags);
-            return new ObjectResult($"Статья {article.Name} создана") { StatusCode = 200 };
+
+            article = await _articleRepository.GetByName(addNewArticleRequest.Name);
+            
+            var articleView = _mapper.Map<Article, ArticleViewModel>(article);
+
+            return new ObjectResult(articleView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -101,7 +107,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             query.NewTags = tags;
 
             await _articleRepository.UpdateArticle(article, query);
-            return new ObjectResult($"Статья {article.Name} обновлена") { StatusCode = 200 };
+
+            article = await _articleRepository.GetById(article.Id);
+
+            var articleView = _mapper.Map<Article, ArticleViewModel>(article);
+
+            return new ObjectResult(articleView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -133,7 +144,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             var query = new UpdateArticleQuery { NewTags = tags };
 
             await _articleRepository.UpdateArticle(article, query);
-            return new ObjectResult($"Статья {article.Name} обновлена") { StatusCode = 200 };
+
+            article = await _articleRepository.GetByName(changeArticleTagsRequest.Name);
+
+            var articleView = _mapper.Map<Article, ArticleViewModel>(article);
+
+            return new ObjectResult(articleView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -191,8 +207,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             var article = await _articleRepository.GetByName(name);
             if (article is null)
                 return new ObjectResult($"Статья с именем \"{name}\" не найдена") { StatusCode = 400 };
-            
-            return new ObjectResult(article) { StatusCode = 200 };
+
+            var articleView = _mapper.Map<Article, ArticleViewModel>(article);
+
+            return new ObjectResult(articleView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -206,7 +224,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (article is null)
                 return new ObjectResult($"Статья с именем \"{guid}\" не найдена") { StatusCode = 400 };
 
-            return new ObjectResult(article) { StatusCode = 200 };
+            var articleView = _mapper.Map<Article, ArticleViewModel>(article);
+
+            return new ObjectResult(articleView) { StatusCode = 200 };
         }
 
         /// <summary>
