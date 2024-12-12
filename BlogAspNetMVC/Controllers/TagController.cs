@@ -30,10 +30,17 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             AddNewTagRequest addNewTagRequest)
         {
-            var result = await _tagService.AddTag(addNewTagRequest);
+            try
+            {
+                var result = await _tagService.AddTag(addNewTagRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -47,10 +54,17 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             ChangeTagRequest changeTagRequest)
         {
-            var result = await _tagService.ChangeTag(changeTagRequest);
+            try
+            {
+                var result = await _tagService.ChangeTag(changeTagRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -63,10 +77,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> DeleteTag(
             [FromRoute] Guid guid)
         {
-            var result = await _tagService.DeleteTag(guid);
+            try
+            {
+                await _tagService.DeleteTag(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, "Тег удален");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -77,10 +98,17 @@ namespace BlogAspNetMVC.Controllers
         [Route("GetAllTags")]
         public async Task<IActionResult> GetAllTags()
         {
-            var result = await _tagService.GetAllTags();
+            try
+            {
+                var result = await _tagService.GetAllTags();
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -93,10 +121,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetTagById(
             [FromRoute] Guid guid)
         {
-            var result = await _tagService.GetTagById(guid);
+            try
+            {
+                var result = await _tagService.GetTagById(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -109,10 +144,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetTagsByArtcleId(
             [FromRoute] Guid guid)
         {
-            var result = await _tagService.GetTagsByArticleId(guid);
+            try
+            {
+                var result = await _tagService.GetTagsByArticleId(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -125,10 +167,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetTagByArtcleName(
             [FromRoute] string name)
         {
-            var result = await _tagService.GetTagsByArticleName(name);
+            try
+            {
+                var result = await _tagService.GetTagsByArticleName(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
     }

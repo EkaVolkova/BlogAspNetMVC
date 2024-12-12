@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -75,19 +76,17 @@ namespace BlogAspNetMVC.Controllers
             SignInRequest request // Объект запроса
             )
         {
-            var result = await _userService.SignIn(request);
-            var status = (ObjectResult)result;
-
-            //Если вход прошел успешно, выполняем аутентификацию
-            if (status.StatusCode == 200)
+            try
             {
-                
-                var user = (UserViewModel)status.Value;
-                await AuthentAsync(user);
-                return StatusCode((int)(status.StatusCode), user);
-            }
+                var result = await _userService.SignIn(request);
+                await AuthentAsync(result);
 
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
 
         }
 
@@ -103,17 +102,17 @@ namespace BlogAspNetMVC.Controllers
             SignUpRequest request // Объект запроса
             )
         {
-            var result = await _userService.SignUp(request);
-            var status = (ObjectResult)result;
-
-            //Если регистрация прошла успешно, выполняем аутентификацию
-            if (status.StatusCode == 200)
+            try
             {
-                var user = (UserViewModel)status.Value;
-                await AuthentAsync(user);
-                return StatusCode((int)(status.StatusCode), user);
+                var result = await _userService.SignUp(request);
+                await AuthentAsync(result);
+
+                return StatusCode(200, result);
             }
-            return StatusCode((int)(status.StatusCode), status.Value);
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
 
         }
 

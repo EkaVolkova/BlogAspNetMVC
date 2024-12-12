@@ -30,10 +30,16 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             AddNewCommentRequest addNewCommentRequest)
         {
-            var result = await _commentService.AddComment(addNewCommentRequest);
+            try
+            {
+                var result = await _commentService.AddComment(addNewCommentRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -47,10 +53,16 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             ChangeCommentRequest changeCommentRequest)
         {
-            var result = await _commentService.ChangeComment(changeCommentRequest);
+            try
+            {
+                var result = await _commentService.ChangeComment(changeCommentRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -63,10 +75,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> DeleteComment(
             [FromRoute] Guid guid)
         {
-            var result = await _commentService.DeleteComment(guid);
+            try
+            {
+                await _commentService.DeleteComment(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, "Комментарий удален");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -77,10 +95,16 @@ namespace BlogAspNetMVC.Controllers
         [Route("GetAllComments")]
         public async Task<IActionResult> GetAllComments()
         {
-            var result = await _commentService.GetAllComments();
+            try
+            {
+                var result = await _commentService.GetAllComments();
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -93,10 +117,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetCommentById(
             [FromRoute] Guid guid)
         {
-            var result = await _commentService.GetCommentById(guid);
+            try
+            {
+                var result = await _commentService.GetCommentById(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -109,10 +139,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetCommentsByAuthorId(
             [FromRoute] Guid guid)
         {
-            var result = await _commentService.GetCommentsByAuthorId(guid);
+            try
+            {
+                var result = await _commentService.GetCommentsByAuthorId(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -125,10 +161,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetCommentByAuthorUserName(
             [FromRoute] string name)
         {
-            var result = await _commentService.GetCommentsByUserName(name);
+            try
+            {
+                var result = await _commentService.GetCommentsByUserName(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -141,10 +183,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetCommentsByArtcleId(
             [FromRoute] Guid guid)
         {
-            var result = await _commentService.GetCommentsByArticleId(guid);
+            try
+            {
+                var result = await _commentService.GetCommentsByArticleId(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -157,10 +205,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetCommentByArtcleUserName(
             [FromRoute] string name)
         {
-            var result = await _commentService.GetCommentsByArticleName(name);
+            try
+            {
+                var result = await _commentService.GetCommentsByArticleName(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
     }

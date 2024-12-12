@@ -34,10 +34,16 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             AddNewRoleRequest addNewRoleRequest)
         {
-            var result = await _roleService.AddRole(addNewRoleRequest);
+            try
+            {
+                var result = await _roleService.AddRole(addNewRoleRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -51,10 +57,16 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             ChangeRoleRequest changeRoleRequest)
         {
-            var result = await _roleService.ChangeRole(changeRoleRequest);
+            try
+            {
+                var result = await _roleService.ChangeRole(changeRoleRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -67,10 +79,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> DeleteRole(
             [FromRoute] Guid guid)
         {
-            var result = await _roleService.DeleteRole(guid);
+            try
+            {
+                await _roleService.DeleteRole(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, "Роль удалена");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -81,10 +99,16 @@ namespace BlogAspNetMVC.Controllers
         [Route("GetAllRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
-            var result = await _roleService.GetAllRoles();
+            try
+            {
+                var result = await _roleService.GetAllRoles();
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
 
@@ -98,10 +122,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetRoleById(
             [FromRoute] Guid guid)
         {
-            var result = await _roleService.GetRoleById(guid);
+            try
+            {
+                var result = await _roleService.GetRoleById(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
 
@@ -115,10 +145,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetAllUsersByRoleId(
             [FromRoute] Guid guid)
         {
-            var result = await _roleService.GetAllUsersByRoleId(guid);
+            try
+            {
+                var result = await _roleService.GetAllUsersByRoleId(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
     }

@@ -7,7 +7,6 @@ using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +38,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="addNewArticleRequest">Модель запроса на добавление статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> AddArticle(AddNewArticleRequest addNewArticleRequest)
+        public async Task<ArticleViewModel> AddArticle(AddNewArticleRequest addNewArticleRequest)
         {
             var article = await _articleRepository.GetByName(addNewArticleRequest.Name);
 
@@ -81,7 +80,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
-            return new ObjectResult(articleView) { StatusCode = 200 };
+            return articleView;
         }
 
         /// <summary>
@@ -89,7 +88,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeArticleRequest">Модель запроса на обновление статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeArticle(ChangeArticleRequest changeArticleRequest)
+        public async Task<ArticleViewModel> ChangeArticle(ChangeArticleRequest changeArticleRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleRequest.OldName);
             //Если статьи не существует, статью нельзя изменить
@@ -121,7 +120,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
-            return new ObjectResult(articleView) { StatusCode = 200 };
+            return articleView;
         }
 
         /// <summary>
@@ -129,7 +128,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeArticleTagsRequest">Модель запроса на обновление тегов статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeArticleTags(ChangeArticleTagsRequest changeArticleTagsRequest)
+        public async Task<ArticleViewModel> ChangeArticleTags(ChangeArticleTagsRequest changeArticleTagsRequest)
         {
             var article = await _articleRepository.GetByName(changeArticleTagsRequest.Name);
             //Если статьи не существует, статью нельзя изменить
@@ -160,7 +159,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
-            return new ObjectResult(articleView) { StatusCode = 200 };
+            return articleView;
         }
 
         /// <summary>
@@ -168,7 +167,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> DeleteArticle(Guid guid)
+        public async Task DeleteArticle(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
 
@@ -177,7 +176,6 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 throw new ArticleNotFoundException($"Статья с Id {guid} не найдена");
 
             await _articleRepository.DeleteArticle(article);
-            return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
         }
 
         /// <summary>
@@ -185,7 +183,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="name">Название статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> DeleteArticle(string name)
+        public async Task DeleteArticle(string name)
         {
             var article = await _articleRepository.GetByName(name);
 
@@ -194,7 +192,6 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 throw new ArticleNotFoundException($"Статья с названием {name} не найдена");
 
             await _articleRepository.DeleteArticle(article);
-            return new ObjectResult($"Статья {article.Name} удалена") { StatusCode = 200 };
 
         }
 
@@ -202,13 +199,14 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// Получить список всех статей
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetAllArticles()
+        public async Task<List<ArticleViewModel>> GetAllArticles()
         {
             var articles = await _articleRepository.GetAllArticles();
             if (articles is null || articles.Count == 0)
-                return new ObjectResult("Нет статей") { StatusCode = 400 };
+                return new List<ArticleViewModel>();
 
-            return new ObjectResult(articles) { StatusCode = 200 };
+            var articlesView = _mapper.Map<List<Article>, List<ArticleViewModel>>(articles);
+            return articlesView;
         }
 
         /// <summary>
@@ -216,7 +214,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="name">Название статьи/param>
         /// <returns></returns>
-        public async Task<IActionResult> GetArticleByName(string name)
+        public async Task<ArticleViewModel> GetArticleByName(string name)
         {
             var article = await _articleRepository.GetByName(name);
 
@@ -226,7 +224,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
-            return new ObjectResult(articleView) { StatusCode = 200 };
+            return articleView;
         }
 
         /// <summary>
@@ -234,7 +232,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetArticleById(Guid guid)
+        public async Task<ArticleViewModel> GetArticleById(Guid guid)
         {
             var article = await _articleRepository.GetById(guid);
 
@@ -244,7 +242,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var articleView = _mapper.Map<Article, ArticleViewModel>(article);
 
-            return new ObjectResult(articleView) { StatusCode = 200 };
+            return articleView;
         }
 
         /// <summary>
@@ -252,14 +250,15 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="userName">UserName пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetArticlesByUserName(string userName)
+        public async Task<List<ArticleViewModel>> GetArticlesByUserName(string userName)
         {
             var allArticles = await _articleRepository.GetAllArticles();
             var articlesByUser = allArticles.Where(a => a.Author.UserName == userName).ToList();
-            if (articlesByUser is null || articlesByUser.Count == 0)
-                return new ObjectResult($"Нет статей пользователя с именем пользователя {userName}") { StatusCode = 400 };
+            if (articlesByUser is null)
+                return new List<ArticleViewModel>();
 
-            return new ObjectResult(articlesByUser) { StatusCode = 200 };
+            var articlesByUserView = _mapper.Map<List<Article>, List<ArticleViewModel>>(articlesByUser);
+            return articlesByUserView;
 
 
         }
@@ -269,14 +268,15 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetArticlesByAuthorId(Guid guid)
+        public async Task<List<ArticleViewModel>> GetArticlesByAuthorId(Guid guid)
         {
             var allArticles = await _articleRepository.GetAllArticles();
             var articlesByUser = allArticles.Where(a => a.AuthorId == guid).ToList();
-            if (articlesByUser is null || articlesByUser.Count == 0)
-                return new ObjectResult($"Нет статей с Id пользователя {guid}") { StatusCode = 400 };
+            if (articlesByUser is null)
+                return new List<ArticleViewModel>();
 
-            return new ObjectResult(articlesByUser) { StatusCode = 200 };
+            var articlesByUserView = _mapper.Map<List<Article>, List<ArticleViewModel>>(articlesByUser);
+            return articlesByUserView;
 
 
         }

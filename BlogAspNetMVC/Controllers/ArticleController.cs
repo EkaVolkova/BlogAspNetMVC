@@ -1,4 +1,6 @@
-﻿using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
+﻿using BlogAspNetMVC.BusinessLogic.Exceptions.ArticleExceptions;
+using BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions;
+using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,11 +35,19 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             AddNewArticleRequest addNewArticleRequest)
         {
+            try
+            {
+                var result = await _articleService.AddArticle(addNewArticleRequest);
 
-            var result = await _articleService.AddArticle(addNewArticleRequest);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+
+
         }
 
         /// <summary>
@@ -51,10 +61,17 @@ namespace BlogAspNetMVC.Controllers
             [FromBody]
             ChangeArticleRequest changeArticleRequest)
         {
-            var result = await _articleService.ChangeArticle(changeArticleRequest);
+            try
+            {
+                var result = await _articleService.ChangeArticle(changeArticleRequest);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -68,10 +85,17 @@ namespace BlogAspNetMVC.Controllers
             [FromRoute] 
             Guid guid)
         {
-            var result = await _articleService.DeleteArticle(guid);
+            try
+            {
+                await _articleService.DeleteArticle(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, "Статья успешно удалена");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -84,10 +108,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> DeleteArticle(
             [FromRoute] string name)
         {
-            var result = await _articleService.DeleteArticle(name);
+            try
+            {
+                await _articleService.DeleteArticle(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, "Статья успешно удалена");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -98,10 +129,17 @@ namespace BlogAspNetMVC.Controllers
         [Route("GetAllArticle")]
         public async Task<IActionResult> GetAllArticles()
         {
-            var result = await _articleService.GetAllArticles();
+            try
+            {
+                var result = await _articleService.GetAllArticles();
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -114,10 +152,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetArticleById(
             [FromRoute] Guid guid)
         {
-            var result = await _articleService.GetArticleById(guid);
+            try
+            {
+                var result = await _articleService.GetArticleById(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -130,10 +175,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetArticleByName(
             [FromRoute] string name)
         {
-            var result = await _articleService.GetArticleByName(name);
+            try
+            {
+                var result = await _articleService.GetArticleByName(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -146,10 +198,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetArticlesByAuthorId(
             [FromRoute] Guid guid)
         {
-            var result = await _articleService.GetArticlesByAuthorId(guid);
+            try
+            {
+                var result = await _articleService.GetArticlesByAuthorId(guid);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
 
         /// <summary>
@@ -162,10 +221,17 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetArticlesByAuthorUserName(
             [FromRoute] string name)
         {
-            var result = await _articleService.GetArticlesByUserName(name);
+            try
+            {
+                var result = await _articleService.GetArticlesByUserName(name);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
+
         }
     }
 }

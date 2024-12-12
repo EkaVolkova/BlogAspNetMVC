@@ -9,6 +9,7 @@ using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="addNewCommentRequest">Модель запроса добавления комментария</param>
         /// <returns></returns>
-        public async Task<IActionResult> AddComment(AddNewCommentRequest addNewCommentRequest)
+        public async Task<CommentViewModel> AddComment(AddNewCommentRequest addNewCommentRequest)
         {
             var comment = await _commentRepository.GetById(addNewCommentRequest.Guid);
             //если комментарий не найден
@@ -69,7 +70,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
 
-            return new ObjectResult(commentView) { StatusCode = 200 };
+            return commentView;
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeCommentRequest">Модель запроса на изменение комментария</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeComment(ChangeCommentRequest changeCommentRequest)
+        public async Task<CommentViewModel> ChangeComment(ChangeCommentRequest changeCommentRequest)
         {
             var comment = await _commentRepository.GetById(changeCommentRequest.Id);
             //Если комментарий не найден
@@ -92,7 +93,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
 
-            return new ObjectResult(commentView) { StatusCode = 200 };
+            return commentView;
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор комментария</param>
         /// <returns></returns>
-        public async Task<IActionResult> DeleteComment(Guid guid)
+        public async Task DeleteComment(Guid guid)
         {
             var comment = await _commentRepository.GetById(guid);
             //Если комментарий не найден
@@ -108,20 +109,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 throw new CommentNotFoundException($"Комментарий с Id \"{guid}\" не найден");
 
             await _commentRepository.DeleteComment(comment);
-            return new ObjectResult($"Комментарий с Id {guid} удален") { StatusCode = 200 };
         }
 
         /// <summary>
         /// Получить список всех комментариев
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetAllComments()
+        public async Task<List<CommentViewModel>> GetAllComments()
         {
             var comments = await _commentRepository.GetAllComments();
-            if (comments is null || comments.Count == 0)
-                return new ObjectResult("Нет комментариев") { StatusCode = 400 };
+            if (comments is null)
+                return new List<CommentViewModel>();
 
-            return new ObjectResult(comments) { StatusCode = 200 };
+            var commentsView = _mapper.Map<List<Comment>, List<CommentViewModel>>(comments);
+            return commentsView;
         }
 
         /// <summary>
@@ -129,7 +130,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор комментария</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommentById(Guid guid)
+        public async Task<CommentViewModel> GetCommentById(Guid guid)
         {
             var comment = await _commentRepository.GetById(guid);
             //Если комментарий не найден
@@ -138,7 +139,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
 
-            return new ObjectResult(commentView) { StatusCode = 200 };
+            return commentView;
         }
 
         /// <summary>
@@ -146,18 +147,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommentsByArticleId(Guid guid)
+        public async Task<List<CommentViewModel>> GetCommentsByArticleId(Guid guid)
         {
             var comments = await _commentRepository.GetAllComments();
             
             if (comments is null)
-                return new ObjectResult($"Комментарии к статье с Id \"{guid}\" не найдены") { StatusCode = 400 };
-            var filteredComments = comments.Where(c => c.ArticleId == guid);
+                return new List<CommentViewModel>();
+
+            var filteredComments = comments.Where(c => c.ArticleId == guid).ToList();
             
             if (filteredComments is null)
-                return new ObjectResult($"Комментарии к статье с Id \"{guid}\" не найдены") { StatusCode = 400 };
+                return new List<CommentViewModel>();
 
-            return new ObjectResult(filteredComments) { StatusCode = 200 };
+            var commentsView = _mapper.Map<List<Comment>, List<CommentViewModel>>(filteredComments);
+
+            return commentsView;
         }
 
         /// <summary>
@@ -165,18 +169,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="articleName">Название статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommentsByArticleName(string articleName)
+        public async Task<List<CommentViewModel>> GetCommentsByArticleName(string articleName)
         {
             var comments = await _commentRepository.GetAllComments();
 
             if (comments is null)
-                return new ObjectResult($"Комментарии к статье с названием \"{articleName}\" не найдены") { StatusCode = 400 };
-            var filteredComments = comments.Where(c => c.Article.Name == articleName);
+                return new List<CommentViewModel>();
+
+            var filteredComments = comments.Where(c => c.Article.Name == articleName).ToList();
 
             if (filteredComments is null)
-                return new ObjectResult($"Комментарии к статье с названием \"{articleName}\" не найдены") { StatusCode = 400 };
+                return new List<CommentViewModel>();
 
-            return new ObjectResult(filteredComments) { StatusCode = 200 };
+            var commentsView = _mapper.Map<List<Comment>, List<CommentViewModel>>(filteredComments);
+
+            return commentsView;
 
         }
 
@@ -185,18 +192,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор автора комментариев</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommentsByAuthorId(Guid guid)
+        public async Task<List<CommentViewModel>> GetCommentsByAuthorId(Guid guid)
         {
             var comments = await _commentRepository.GetAllComments();
 
             if (comments is null)
-                return new ObjectResult($"Комментарии автора с Id \"{guid}\" не найдены") { StatusCode = 400 };
-            var filteredComments = comments.Where(c => c.Author.Id == guid);
+                return new List<CommentViewModel>();
+
+            var filteredComments = comments.Where(c => c.Author.Id == guid).ToList();
 
             if (filteredComments is null)
-                return new ObjectResult($"Комментарий автора с Id \"{guid}\" не найдены") { StatusCode = 400 };
+                return new List<CommentViewModel>();
 
-            return new ObjectResult(filteredComments) { StatusCode = 200 };
+            var commentsView = _mapper.Map<List<Comment>, List<CommentViewModel>>(filteredComments);
+
+            return commentsView;
         }
 
         /// <summary>
@@ -204,18 +214,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="userName">UserName автора комментариев</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommentsByUserName(string userName)
+        public async Task<List<CommentViewModel>> GetCommentsByUserName(string userName)
         {
             var comments = await _commentRepository.GetAllComments();
 
             if (comments is null)
-                return new ObjectResult($"Комментарии автора с UserName \"{userName}\" не найдены") { StatusCode = 400 };
-            var filteredComments = comments.Where(c => c.Author.UserName == userName);
+                return new List<CommentViewModel>();
+
+            var filteredComments = comments.Where(c => c.Author.UserName == userName).ToList();
 
             if (filteredComments is null)
-                return new ObjectResult($"Комментарий автора с UserName \"{userName}\" не найдены") { StatusCode = 400 };
+                return new List<CommentViewModel>();
 
-            return new ObjectResult(filteredComments) { StatusCode = 200 };
+            var commentsView = _mapper.Map<List<Comment>, List<CommentViewModel>>(filteredComments);
+
+            return commentsView;
         }
     }
 

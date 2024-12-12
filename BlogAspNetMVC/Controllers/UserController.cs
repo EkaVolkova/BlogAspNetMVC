@@ -35,10 +35,16 @@ namespace BlogAspNetMVC.Controllers
             ChangePasswordRequest request // Объект запроса
 )
         {
-            var result = await _userService.ChangePassword(request);
+            try
+            {
+                var result = await _userService.ChangePassword(request);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
 
         }
 
@@ -54,10 +60,16 @@ namespace BlogAspNetMVC.Controllers
             ChangeUserNameRequest request // Объект запроса
 )
         {
-            var result = await _userService.ChangeUserName(request);
+            try
+            {
+                var result = await _userService.ChangeUserName(request);
 
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
 
         }
 
@@ -69,9 +81,16 @@ namespace BlogAspNetMVC.Controllers
         [Route("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var result = await _userService.GetAll();
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+            try
+            {
+                var result = await _userService.GetAll();
+
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -84,10 +103,16 @@ namespace BlogAspNetMVC.Controllers
         public async Task<IActionResult> GetUserById(
             [FromRoute] Guid id)
         {
+            try
+            {
+                var result = await _userService.GetById(id);
 
-            var result = await _userService.GetById(id);
-            var status = (ObjectResult)result;
-            return StatusCode((int)(status.StatusCode), status.Value);
+                return StatusCode(200, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.ToString());
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeUserRoleRequest">Модель запроса на изменение роли</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeRole(ChangeUserRoleRequest changeUserRoleRequest)
+        public async Task<UserViewModel> ChangeRole(ChangeUserRoleRequest changeUserRoleRequest)
         {
             var user = await _userRepository.GetByUserName(changeUserRoleRequest.UserName);
             //если пользователь не найден
@@ -46,7 +46,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changePasswordRequest">Модель запроса на обновление пароля пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest changePasswordRequest)
+        public async Task<UserViewModel> ChangePassword(ChangePasswordRequest changePasswordRequest)
         {
             var user = await _userRepository.GetByUserName(changePasswordRequest.UserName);
             //если пользователь не найден
@@ -76,7 +76,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeUserNameRequest">Модель запроса на обновление UserName пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeUserName(ChangeUserNameRequest changeUserNameRequest)
+        public async Task<UserViewModel> ChangeUserName(ChangeUserNameRequest changeUserNameRequest)
         {
             var user = await _userRepository.GetByUserName(changeUserNameRequest.OldUserName);
             //если пользователь не найден
@@ -101,22 +101,22 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
         }
 
         /// <summary>
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetAll()
+        public async Task<List<UserViewModel>> GetAll()
         {
             var users = await _userRepository.GetAllUsers();
-            if (users is null || users.Count == 0)
-                return new ObjectResult("Нет пользователей") { StatusCode = 400};
+            if (users is null)
+                return new List<UserViewModel>();
 
             var usersView = _mapper.Map<List<User>, List<UserViewModel>>(users);
 
-            return new ObjectResult(usersView) { StatusCode = 200};
+            return usersView;
 
         }
 
@@ -125,7 +125,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetById(Guid guid)
+        public async Task<UserViewModel> GetById(Guid guid)
         {
             var user = await _userRepository.GetById(guid);
             //если пользователь не найден
@@ -134,7 +134,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             
             var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
 
         }
 
@@ -143,7 +143,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="name">UserName пользователя</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetByUserName(string name)
+        public async Task<UserViewModel> GetByUserName(string name)
         {
             var user = await _userRepository.GetByUserName(name);
             //если пользователь не найден
@@ -154,7 +154,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
 
         }
 
@@ -163,7 +163,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="signInRequest">Модель запроса на вход в систему</param>
         /// <returns></returns>
-        public async Task<IActionResult> SignIn(SignInRequest signInRequest)
+        public async Task<UserViewModel> SignIn(SignInRequest signInRequest)
         {
             var user = await _userRepository.GetByUserName(signInRequest.UserName);
             //если пользователь не найден
@@ -174,11 +174,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             if (user.Password != signInRequest.Password)
             {
-                return new ObjectResult("Неверный пароль") { StatusCode = 401 };
+                throw new UserPasswordIsWrong("Неверный пароль");
             }
 
             var userView = _mapper.Map<User, UserViewModel>(user);
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="signUpRequest">Модель запроса на регистрацию в системе</param>
         /// <returns></returns>
-        public async Task<IActionResult> SignUp(SignUpRequest signUpRequest)
+        public async Task<UserViewModel> SignUp(SignUpRequest signUpRequest)
         {
             var user = await _userRepository.GetByUserName(signUpRequest.UserName);
             //если пользователь уже существует
@@ -204,7 +204,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             user = await _userRepository.GetByUserName(signUpRequest.UserName);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
-            return new ObjectResult(userView) { StatusCode = 200 };
+            return userView;
         }
     }
 }

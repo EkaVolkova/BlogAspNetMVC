@@ -1,8 +1,10 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Services
@@ -14,28 +16,28 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="addNewRoleRequest">Запрос на добавление роли</param>
         /// <returns></returns>
-        Task<IActionResult> AddRole(AddNewRoleRequest addNewRoleRequest);
+        Task<RoleViewModel> AddRole(AddNewRoleRequest addNewRoleRequest);
 
         /// <summary>
         /// Изменить роль пользователя
         /// </summary>
         /// <param name="changeRoleRequest">Запрос на изменение роли пользователя</param>
         /// <returns></returns>
-        Task<IActionResult> ChangeRole(ChangeRoleRequest changeRoleRequest);
+        Task<RoleViewModel> ChangeRole(ChangeRoleRequest changeRoleRequest);
 
         /// <summary>
         /// Удалить роль пользователя
         /// </summary>
         /// <param name="guid">Идентификатор роли пользователя</param>
         /// <returns></returns>
-        Task<IActionResult> DeleteRole(Guid guid);
+        Task DeleteRole(Guid guid);
 
 
         /// <summary>
         /// Получить список всех ролей
         /// </summary>
         /// <returns></returns>
-        Task<IActionResult> GetAllRoles();
+        Task<List<RoleViewModel>> GetAllRoles();
 
 
         /// <summary>
@@ -43,20 +45,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор роли пользователя</param>
         /// <returns></returns>
-        Task<IActionResult> GetRoleById(Guid guid);
+        Task<RoleViewModel> GetRoleById(Guid guid);
 
         /// <summary>
         /// Получить роль по названию
         /// </summary>
         /// <param name="articleName">Название роли пользователя</param>
         /// <returns></returns>
-        Task<IActionResult> GetRoleByName(string name);
+        Task<RoleViewModel> GetRoleByName(string name);
 
         /// <summary>
         /// Получить список всех пользователей с данной ролью
         /// </summary>
         /// <param name="guid">Идентификатор роли пользователя</param>
         /// <returns></returns>
-        Task<IActionResult> GetAllUsersByRoleId(Guid guid);
+        Task<List<UserViewModel>> GetAllUsersByRoleId(Guid guid);
     }
 }

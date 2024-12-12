@@ -31,7 +31,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="addNewTagRequest">Моедль запроса на добавление тега</param>
         /// <returns></returns>
-        public async Task<IActionResult> AddTag(AddNewTagRequest addNewTagRequest)
+        public async Task<TagViewModel> AddTag(AddNewTagRequest addNewTagRequest)
         {
             var tag = await _tagRepository.GetByName(addNewTagRequest.Name);
             //если тег уже был добавлен
@@ -45,7 +45,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 
-            return new ObjectResult(tagView) { StatusCode = 200 };
+            return tagView;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
         /// <returns></returns>
-        public async Task<IActionResult> ChangeTag(ChangeTagRequest changeTagRequest)
+        public async Task<TagViewModel> ChangeTag(ChangeTagRequest changeTagRequest)
         {
             var tag = await _tagRepository.GetByName(changeTagRequest.OldName);
             //если тег не найден
@@ -69,7 +69,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 
-            return new ObjectResult(tagView) { StatusCode = 200 };
+            return tagView;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор тега</param>
         /// <returns></returns>
-        public async Task<IActionResult> DeleteTag(Guid guid)
+        public async Task DeleteTag(Guid guid)
         {
             var tag = await _tagRepository.GetById(guid);
             //если тег не найден
@@ -85,20 +85,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 throw new TagNotFoundException($"Тег с Id \"{guid}\" не найден");
 
             await _tagRepository.DeleteTag(tag);
-            return new ObjectResult($"Тег с Id {guid} удален") { StatusCode = 200 };
         }
 
         /// <summary>
         /// Получить список всех тегов
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetAllTags()
+        public async Task<List<TagViewModel>> GetAllTags()
         {
             var tags = await _tagRepository.GetAllTags();
             if (tags is null || tags.Count == 0)
-                return new ObjectResult("Нет тегов") { StatusCode = 400 };
+                return new List<TagViewModel>();
 
-            return new ObjectResult(tags) { StatusCode = 200 };
+            var tagsView = _mapper.Map<List<Tag>, List<TagViewModel>>(tags);
+
+            return tagsView;
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор тега</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetTagById(Guid guid)
+        public async Task<TagViewModel> GetTagById(Guid guid)
         {
             var tag = await _tagRepository.GetById(guid);
             //если тег не найден
@@ -115,7 +116,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 
-            return new ObjectResult(tagView) { StatusCode = 200 };
+            return tagView;
         }
 
         /// <summary>
@@ -123,18 +124,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetTagsByArticleId(Guid guid)
+        public async Task<List<TagViewModel>> GetTagsByArticleId(Guid guid)
         {
             var tags = await _tagRepository.GetAllTags();
 
             if (tags is null)
-                return new ObjectResult($"Комментарии к статье с Id \"{guid}\" не найдены") { StatusCode = 400 };
+                return new List<TagViewModel>();
             var filteredTags = tags.Where(tag => tag.Articles.Any(article => article.Id == guid)).ToList();
 
             if (filteredTags is null)
-                return new ObjectResult($"Комментарии к статье с Id \"{guid}\" не найдены") { StatusCode = 400 };
+                return new List<TagViewModel>();
 
-            return new ObjectResult(filteredTags) { StatusCode = 200 };
+            var tagsView = _mapper.Map<List<Tag>, List<TagViewModel>>(filteredTags);
+
+            return tagsView;
         }
 
         /// <summary>
@@ -142,18 +145,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// </summary>
         /// <param name="articleName">Название статьи</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetTagsByArticleName(string articleName)
+        public async Task<List<TagViewModel>> GetTagsByArticleName(string articleName)
         {
             var tags = await _tagRepository.GetAllTags();
 
             if (tags is null)
-                return new ObjectResult($"Комментарии к статье с названием \"{articleName}\" не найдены") { StatusCode = 400 };
+                return new List<TagViewModel>();
             var filteredTags = tags.Where(tag => tag.Articles.Any(article => article.Name == articleName)).ToList();
 
             if (filteredTags is null)
-                return new ObjectResult($"Комментарии к статье с названием \"{articleName}\" не найдены") { StatusCode = 400 };
+                return new List<TagViewModel>();
 
-            return new ObjectResult(filteredTags) { StatusCode = 200 };
+            var tagsView = _mapper.Map<List<Tag>, List<TagViewModel>>(filteredTags);
+
+            return tagsView;
 
         }
 
