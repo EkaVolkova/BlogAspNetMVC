@@ -4,6 +4,7 @@ using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using System;
@@ -30,6 +31,13 @@ namespace BlogAspNetMVC
             CreateMap<ChangeArticleRequest, UpdateArticleQuery>();
             CreateMap<ChangeCommentRequest, UpdateCommentQuery>();
             CreateMap<ChangeRoleRequest, UpdateRoleQuery>();
+            CreateMap<User, UserViewModel>()
+                            .ForMember(uv => uv.CommentsId,
+                                    opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
+                            .ForMember(uv => uv.ArticlesId,
+                                    opt => opt.MapFrom(src => src.Articles.Select(c => c.Id).ToList()))
+                            .ForMember(uv => uv.RoleName,
+                                    opt => opt.MapFrom(src => src.Role.Name));
             CreateMap<ChangeUserRoleRequest, UpdateUserQuery>();
 
         }
