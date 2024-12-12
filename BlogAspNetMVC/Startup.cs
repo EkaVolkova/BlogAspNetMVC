@@ -56,6 +56,18 @@ namespace BlogAspNetMVC
                 .AddJsonOptions(o => o.JsonSerializerOptions
                  .ReferenceHandler = ReferenceHandler.Preserve);
 
+            services.AddAuthentication(options => options.DefaultScheme = "Cookies")
+                .AddCookie("Cookies", options =>
+                {
+                    options.Events = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+                    {
+                        OnRedirectToLogin = redirectContext =>
+                        {
+                            redirectContext.HttpContext.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
         }
 
