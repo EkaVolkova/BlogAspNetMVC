@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using BlogAspNetMVC.Data.Queries;
 using BlogAspNetMVC.Data.Repositories;
@@ -59,7 +60,11 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             await _commentRepository.Create(comment, article, author, parComment);
 
-            return new ObjectResult($"Комментарий создан") { StatusCode = 200 };
+            comment = await _commentRepository.GetById(addNewCommentRequest.Guid);
+
+            var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
+
+            return new ObjectResult(commentView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -76,7 +81,12 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 
             var query = _mapper.Map<ChangeCommentRequest, UpdateCommentQuery>(changeCommentRequest);
             await _commentRepository.UpdateComment(comment, query);
-            return new ObjectResult($"Комментарий с Id {changeCommentRequest.Id} обновлен") { StatusCode = 200 };
+
+            comment = await _commentRepository.GetById(changeCommentRequest.Id);
+
+            var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
+
+            return new ObjectResult(commentView) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -118,7 +128,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (comment is null)
                 return new ObjectResult($"Комментарий с Id \"{guid}\" не найден") { StatusCode = 400 };
 
-            return new ObjectResult(comment) { StatusCode = 200 };
+            var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
+
+            return new ObjectResult(commentView) { StatusCode = 200 };
         }
 
         /// <summary>
