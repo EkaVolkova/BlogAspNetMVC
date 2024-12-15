@@ -12,7 +12,7 @@ namespace BlogAspNetMVC.Controllers
     [Route("[controller]")]
     public class TagController : Controller
     {
-        ITagService _tagService;
+        readonly ITagService _tagService;
         private readonly ILogger<TagController> _logger;
 
         public TagController(ILogger<TagController> logger, ITagService tagService)

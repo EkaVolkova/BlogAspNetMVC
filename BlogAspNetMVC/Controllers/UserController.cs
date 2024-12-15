@@ -16,7 +16,7 @@ namespace BlogAspNetMVC.Controllers
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
-        IUserService _userService;
+        readonly IUserService _userService;
 
         public UserController(ILogger<UserController> logger, IUserService userService)
         {

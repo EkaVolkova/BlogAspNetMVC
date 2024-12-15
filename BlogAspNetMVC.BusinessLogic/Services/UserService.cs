@@ -15,8 +15,8 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 {
     public class UserService : IUserService
     {
-        IUserRepository _userRepository;
-        IMapper _mapper;
+        readonly IUserRepository _userRepository;
+        readonly IMapper _mapper;
 
         public UserService(IUserRepository userRepository, IMapper mapper)
         {

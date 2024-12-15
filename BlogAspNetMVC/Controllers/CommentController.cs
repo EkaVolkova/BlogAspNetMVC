@@ -12,7 +12,7 @@ namespace BlogAspNetMVC.Controllers
     [Route("[controller]")]
     public class CommentController : Controller
     {
-        ICommentService _commentService;
+        readonly ICommentService _commentService;
         private readonly ILogger<CommentController> _logger;
 
         public CommentController(ILogger<CommentController> logger, ICommentService commentService)

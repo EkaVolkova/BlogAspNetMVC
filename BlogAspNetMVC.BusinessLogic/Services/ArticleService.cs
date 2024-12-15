@@ -16,10 +16,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 {
     public class ArticleService : IArticleService
     {
-        IArticleRepository _articleRepository;
-        IUserRepository _userRepository;
-        ITagRepository _tagRepository;
-        IMapper _mapper;
+        readonly IArticleRepository _articleRepository;
+        readonly IUserRepository _userRepository;
+        readonly ITagRepository _tagRepository;
+        readonly IMapper _mapper;
 
         public ArticleService(
                                 IArticleRepository articleRepository,
@@ -55,7 +55,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
                 throw new UserNotFoundException($"Пользователь c Id {addNewArticleRequest.AuthorId} не найден");
             }
 
-            List<Tag> tags = new List<Tag>();
+            List<Tag> tags = new();
 
             if(!(addNewArticleRequest.Tags is null) && addNewArticleRequest.Tags.Count > 0)
             {
@@ -95,7 +95,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (article is null)
                 throw new ArticleNotFoundException($"Статья с названием {changeArticleRequest.OldName} не найдена");
 
-            List<Tag> tags = new List<Tag>();
+            List<Tag> tags = new();
 
             if (changeArticleRequest.NewTags.Count > 0)
             {
@@ -135,7 +135,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             if (article is null)
                 throw new ArticleNotFoundException($"Статья с названием {changeArticleTagsRequest.Name} не найдена");
 
-            List<Tag> tags = new List<Tag>();
+            List<Tag> tags = new();
 
             if (changeArticleTagsRequest.Tags.Count > 0)
             {

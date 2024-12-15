@@ -11,8 +11,8 @@ namespace BlogAspNetMVC.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        DataContext _context;
-        IRoleRepository _roleRepository;
+        readonly DataContext _context;
+        readonly IRoleRepository _roleRepository;
         public UserRepository(DataContext context, IRoleRepository roleRepository)
         {
             _context = context;

@@ -17,8 +17,8 @@ namespace BlogAspNetMVC.Controllers
     [Route("[controller]")]
     public class ArticleController : Controller
     {
-        IArticleService _articleService;
-        ILogger<ArticleController> _logger;
+        readonly IArticleService _articleService;
+        readonly ILogger<ArticleController> _logger;
 
         public ArticleController(ILogger<ArticleController> logger, IArticleService articleService)
         {

@@ -15,8 +15,8 @@ namespace BlogAspNetMVC.Controllers
     [Route("[controller]")]
     public class RoleController : Controller
     {
-        IRoleService _roleService;
-        ILogger<RoleController> _logger;
+        readonly IRoleService _roleService;
+        readonly ILogger<RoleController> _logger;
 
         public RoleController(ILogger<RoleController> logger, IRoleService roleService)
         {

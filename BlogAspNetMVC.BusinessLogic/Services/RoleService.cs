@@ -14,8 +14,8 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 {
     public class RoleService : IRoleService
     {
-        IRoleRepository _roleRepository;
-        IMapper _mapper;
+        readonly IRoleRepository _roleRepository;
+        readonly IMapper _mapper;
 
         public RoleService(
                                 IRoleRepository roleRepository,

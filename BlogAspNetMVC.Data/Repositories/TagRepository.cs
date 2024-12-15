@@ -10,7 +10,7 @@ namespace BlogAspNetMVC.Data.Repositories
 {
     public class TagRepository : ITagRepository
     {
-        DataContext _context;
+        readonly DataContext _context;
         public TagRepository(DataContext context)
         {
             _context = context;

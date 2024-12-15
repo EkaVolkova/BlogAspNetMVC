@@ -10,7 +10,7 @@ namespace BlogAspNetMVC.Data.Repositories
 {
     public class ArticleRepository : IArticleRepository
     {
-        DataContext _context;
+        readonly DataContext _context;
         public ArticleRepository(DataContext context)
         {
             _context = context;

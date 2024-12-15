@@ -22,17 +22,13 @@ namespace BlogAspNetMVC.Controllers
     [Route("[controller]")]
     public class AuthController : Controller
     {
-        IUserService _userService;
-        IRoleService _roleService;
-        ILogger<AuthController> _logger;
-        IMapper _mapper;
+        readonly IUserService _userService;
+        readonly ILogger<AuthController> _logger;
 
-        public AuthController(ILogger<AuthController> logger, IUserService authService, IRoleService roleService, IMapper mapper)
+        public AuthController(ILogger<AuthController> logger, IUserService authService)
         {
             _userService = authService;
-            _roleService = roleService;
             _logger = logger;
-            _mapper = mapper;
         }
 
 
@@ -54,7 +50,7 @@ namespace BlogAspNetMVC.Controllers
             };
 
             //Создали объект класса ClaimsIdentity, который реализует интерфейс IIdentity и представляет текущего пользователя
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(
+            ClaimsIdentity claimsIdentity = new(
                 claims,
                 "AppCookie",
                 ClaimsIdentity.DefaultNameClaimType,

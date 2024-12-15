@@ -15,8 +15,8 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 {
     public class TagService : ITagService
     {
-        ITagRepository _tagRepository;
-        IMapper _mapper;
+        readonly ITagRepository _tagRepository;
+        readonly IMapper _mapper;
 
         public TagService(
                                 ITagRepository tagRepository,

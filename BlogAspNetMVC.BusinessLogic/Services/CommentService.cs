@@ -17,10 +17,10 @@ namespace BlogAspNetMVC.BusinessLogic.Services
 {
     public class CommentService : ICommentService
     {
-        IArticleRepository _articleRepository;
-        IUserRepository _userRepository;
-        ICommentRepository _commentRepository;
-        IMapper _mapper;
+        readonly IArticleRepository _articleRepository;
+        readonly IUserRepository _userRepository;
+        readonly ICommentRepository _commentRepository;
+        readonly IMapper _mapper;
 
         public CommentService(
                                 IArticleRepository articleRepository,
