@@ -1,0 +1,28 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.UserRequests.SignInRequest
+
+<h2>Вход</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+<div class="alert alert-danger">
+    <strong>Ошибка!</strong> Некорректное имя пользователя или пароль.
+</div>
+}
+
+<form asp-action="SignIn" method="post">
+    <div>
+        <label asp-for="UserName">Имя пользователя</label>
+        <input asp-for="UserName" class="form-control w-50" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Password">Пароль</label>
+        <input asp-for="Password" type="password" class="form-control w-50"   />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary mt-2" type="submit">Войти</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
