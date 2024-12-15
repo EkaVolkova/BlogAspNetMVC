@@ -2,6 +2,7 @@
 using BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions;
 using BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.ArticleRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,14 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new AddNewArticleRequestValidation();
+                var validationResult = validator.Validate(addNewArticleRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
+
                 var result = await _articleService.AddArticle(addNewArticleRequest);
 
                 return StatusCode(200, result);
@@ -65,6 +74,14 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangeArticleRequestValidation();
+                var validationResult = validator.Validate(changeArticleRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
+
                 var result = await _articleService.ChangeArticle(changeArticleRequest);
 
                 return StatusCode(200, result);

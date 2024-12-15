@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.RoleRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new AddNewRoleRequestValidation();
+                var validationResult = validator.Validate(addNewRoleRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _roleService.AddRole(addNewRoleRequest);
 
                 return StatusCode(200, result);
@@ -61,6 +69,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangeRoleRequestValidation();
+                var validationResult = validator.Validate(changeRoleRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _roleService.ChangeRole(changeRoleRequest);
 
                 return StatusCode(200, result);

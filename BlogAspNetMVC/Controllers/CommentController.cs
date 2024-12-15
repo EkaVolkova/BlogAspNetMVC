@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.CommentRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -34,6 +35,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new AddNewCommentRequestValidation();
+                var validationResult = validator.Validate(addNewCommentRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _commentService.AddComment(addNewCommentRequest);
 
                 return StatusCode(200, result);
@@ -57,6 +65,14 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangeCommentRequestValidation();
+                var validationResult = validator.Validate(changeCommentRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
+
                 var result = await _commentService.ChangeComment(changeCommentRequest);
 
                 return StatusCode(200, result);

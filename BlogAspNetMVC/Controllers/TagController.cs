@@ -1,5 +1,6 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.TagRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,6 +36,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new AddNewTagRequestValidation();
+                var validationResult = validator.Validate(addNewTagRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _tagService.AddTag(addNewTagRequest);
 
                 return StatusCode(200, result);
@@ -60,6 +68,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangeTagRequestValidation();
+                var validationResult = validator.Validate(changeTagRequest);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _tagService.ChangeTag(changeTagRequest);
 
                 return StatusCode(200, result);

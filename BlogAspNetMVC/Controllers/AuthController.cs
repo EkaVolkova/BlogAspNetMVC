@@ -2,6 +2,7 @@
 using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.UserRequests;
 using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -76,6 +77,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new SignInRequestValidation();
+                var validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _userService.SignIn(request);
                 await AuthentAsync(result);
 
@@ -103,6 +111,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new SignUpRequestValidation();
+                var validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _userService.SignUp(request);
                 await AuthentAsync(result);
 

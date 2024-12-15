@@ -1,6 +1,9 @@
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.ArticleRequests;
 using BlogAspNetMVC.Data;
 using BlogAspNetMVC.Data.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -46,6 +49,8 @@ namespace BlogAspNetMVC
             // Добавляем автомаппер
             var assembly = Assembly.GetAssembly(typeof(MappingProfile));
             services.AddAutoMapper(assembly);
+
+            services.AddFluentValidationAutoValidation();
 
             //Добавляем подключение к БД
             string connection = Configuration.GetConnectionString("DefaultConnection");

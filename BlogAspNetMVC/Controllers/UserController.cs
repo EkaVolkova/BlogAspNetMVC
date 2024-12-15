@@ -1,6 +1,7 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
+using BlogAspNetMVC.BusinessLogic.Validation.UserRequests;
 using BlogAspNetMVC.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangePasswordRequestValidation();
+                var validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _userService.ChangePassword(request);
 
                 return StatusCode(200, result);
@@ -65,6 +73,13 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                var validator = new ChangeUserNameRequestValidation();
+                var validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var result = await _userService.ChangeUserName(request);
 
                 return StatusCode(200, result);
