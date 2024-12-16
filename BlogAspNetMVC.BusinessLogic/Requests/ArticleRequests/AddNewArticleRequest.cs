@@ -15,7 +15,7 @@ namespace BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests
 
         public Guid AuthorId { get; set; }
 
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; set; } = new List<string>();
 
     }
 }

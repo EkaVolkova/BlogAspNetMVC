@@ -31,7 +31,7 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// <summary>
         /// Навигационное свойство: список id тегов к статье
         /// </summary>
-        public List<Guid> TagsId { get; set; }
+        public List<Guid> TagsId { get; set; } = new List<Guid>();
 
         /// <summary>
         /// Навигационное свойство: список id комментариев к статье
