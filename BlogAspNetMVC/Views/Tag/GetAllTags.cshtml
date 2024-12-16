@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.TagViewModel>
+
+@{
+    ViewData["Title"] = "Список тегов";
+}
+
+<h2>Список тегов</h2>
+
+@if (Model != null && Model.Any())
+{
+    <a href="/Tag/CreateNewTag">Добавить тег</a>
+
+    <div class="tag-container">
+        @foreach (var tag in Model)
+        {
+            <div class="tag-box">
+                <div>
+                    <a href="@Url.Action("GetArticlesByTag", "Articles", new { tagName = tag.Name })">@tag.Name</a>
+                </div>
+                <div class="article-count">(Статей по тегу: @tag.ArticlesId.Count)</div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных тегов.</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

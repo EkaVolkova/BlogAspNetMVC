@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
@@ -19,12 +20,22 @@ namespace BlogAspNetMVC.Controllers
     public class ArticleController : Controller
     {
         readonly IArticleService _articleService;
+        readonly IUserService _userService;
         readonly ILogger<ArticleController> _logger;
 
-        public ArticleController(ILogger<ArticleController> logger, IArticleService articleService)
+        public ArticleController(ILogger<ArticleController> logger, IArticleService articleService, IUserService userService)
         {
             _articleService = articleService;
+            _userService = userService;
             _logger = logger;
+        }
+
+        [Authorize(Roles = "admin, moderator")]
+        [HttpGet]
+        [Route("CreateNewArticle")]
+        public IActionResult CreateNewArticle()
+        {
+            return View();
         }
 
         /// <summary>
@@ -35,11 +46,16 @@ namespace BlogAspNetMVC.Controllers
         [HttpPost]
         [Route("CreateNewArticle")]
         public async Task<IActionResult> CreateNewArticle(
-            [FromBody]
             AddNewArticleRequest addNewArticleRequest)
         {
             try
             {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                addNewArticleRequest.AuthorId = user.Id;
+
                 var validator = new AddNewArticleRequestValidation();
                 var validationResult = validator.Validate(addNewArticleRequest);
 
@@ -49,15 +65,15 @@ namespace BlogAspNetMVC.Controllers
                 }
 
                 var result = await _articleService.AddArticle(addNewArticleRequest);
+                return View(result);
 
-                return StatusCode(200, result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                
             }
 
-
+            return View();
 
         }
 
@@ -140,25 +156,26 @@ namespace BlogAspNetMVC.Controllers
 
         }
 
+
         /// <summary>
         /// Получить все статьи
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
-        [Route("GetAllArticle")]
+        [Route("GetAllArticles")]
         public async Task<IActionResult> GetAllArticles()
         {
             try
             {
                 var result = await _articleService.GetAllArticles();
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
             }
-
+            return View();
         }
 
         /// <summary>

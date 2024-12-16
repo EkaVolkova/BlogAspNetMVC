@@ -22,6 +22,15 @@ namespace BlogAspNetMVC.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "admin, moderator")]
+        [HttpGet]
+        [Route("CreateNewTag")]
+        public IActionResult CreateNewTag()
+        {
+            return View();
+        }
+
+
         /// <summary>
         /// Создать новый тег
         /// </summary>
@@ -31,7 +40,6 @@ namespace BlogAspNetMVC.Controllers
         [HttpPost]
         [Route("CreateNewTag")]
         public async Task<IActionResult> CreateNewTag(
-            [FromBody]
             AddNewTagRequest addNewTagRequest)
         {
             try
@@ -44,14 +52,15 @@ namespace BlogAspNetMVC.Controllers
                     return BadRequest(validationResult.Errors);
                 }
                 var result = await _tagService.AddTag(addNewTagRequest);
-
-                return StatusCode(200, result);
+                
+                
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления тега {ex}");
+                ModelState.AddModelError(string.Empty, "Некорректное название.");
             }
-
+            return View(addNewTagRequest);
         }
 
         /// <summary>
@@ -122,14 +131,15 @@ namespace BlogAspNetMVC.Controllers
             try
             {
                 var result = await _tagService.GetAllTags();
+                return View(result); 
 
-                return StatusCode(200, result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления тега {ex}");
+                ModelState.AddModelError(string.Empty, "Некорректное название.");
             }
-
+            return View();
         }
 
         /// <summary>
