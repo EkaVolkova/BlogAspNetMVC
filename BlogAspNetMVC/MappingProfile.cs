@@ -32,7 +32,8 @@ namespace BlogAspNetMVC
         private void RequestToDbModelCreateMap()
         {
             CreateMap<SignUpRequest, User>();
-            CreateMap<AddNewArticleRequest, Article>();
+            CreateMap<AddNewArticleRequest, Article>()
+                .ForMember(m => m.Tags, r => r.Ignore());
             CreateMap<AddNewCommentRequest, Comment>();
             CreateMap<AddNewTagRequest, Tag>();
             CreateMap<AddNewRoleRequest, Role>();

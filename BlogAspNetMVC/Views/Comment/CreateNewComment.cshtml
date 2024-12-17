@@ -1,0 +1,36 @@
+﻿
+@model BlogAspNetMVC.BusinessLogic.Requests.CommentRequest.AddNewCommentRequest
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+@if (ViewContext.HttpContext.User.Claims != null && ViewContext.HttpContext.User.Claims.Count() != 0)
+{
+<form asp-controller="Comment" asp-action="CreateNewComment" method="post">
+    <div class="form-group text-left w-50">
+        <label asp-for="Text">Текст комментария</label>
+        <input asp-for="Text" class="form-control" />
+        <span asp-validation-for="Text" class="text-danger"></span>
+        <div>
+            <input type="hidden" asp-for="ArticleId" /> <!-- Скрытый элемент для обновления данных (обновляется с помощью JavaScript) -->
+        </div>
+    </div>
+    <div class="text-left w-50">
+
+        <button class="btn btn-primary mt-2 btn-right" id="submit" type="submit">Добавить комментарий</button>
+    </div>
+</form>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+        document.getElementById('submit').addEventListener('click', function () {
+            const hiddenInput = document.querySelector('input[name="ArticleId"]');
+            hiddenInput.value = Model.Id;
+        });
+</script>
+}

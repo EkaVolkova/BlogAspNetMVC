@@ -31,14 +31,28 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewRoleRequest">запрос на создание роли</param>
         /// <returns></returns>
+        [HttpGet]
+        [Route("CreateNewRole")]
+        public IActionResult CreateNewRole()
+        {
+            _logger.LogTrace($"Открыта вкладка добавления роли");
+            return View();
+        }
+
+        /// <summary>
+        /// Создать новую роль
+        /// </summary>
+        /// <param name="addNewRoleRequest">запрос на создание роли</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("CreateNewRole")]
         public async Task<IActionResult> CreateNewRole(
-            [FromBody]
+        [FromBody]
             AddNewRoleRequest addNewRoleRequest)
         {
             try
             {
+                _logger.LogInformation($"Попытка добавить роль");
                 var validator = new AddNewRoleRequestValidation();
                 var validationResult = validator.Validate(addNewRoleRequest);
 
@@ -48,12 +62,14 @@ namespace BlogAspNetMVC.Controllers
                 }
                 var result = await _roleService.AddRole(addNewRoleRequest);
 
-                return StatusCode(200, result);
+                return View(addNewRoleRequest);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления роли {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
         /// <summary>
@@ -118,14 +134,18 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogTrace($"Открыта вкладка получения ролей");
+                _logger.LogInformation($"Попытка получения ролей");
                 var result = await _roleService.GetAllRoles();
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения ролей {ex}");
+                ModelState.AddModelError(string.Empty, "получения ролей");
             }
+            return View();
         }
 
 

@@ -29,9 +29,20 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         public Guid AuthorId { get; set; }
 
         /// <summary>
+        /// Навигационное свойство: id авторa комментария
+        /// </summary>
+        public UserViewModel Author { get; set; }
+
+        /// <summary>
         /// Навигационное свойство: идентификатор статьи, к которой оставлен комментарий
         /// </summary>
         public Guid ArticleId { get; set; }
+
+        /// <summary>
+        /// Навигационное свойство: идентификатор статьи, к которой оставлен комментарий
+        /// </summary>
+        public ArticleViewModel Article { get; set; }
+
 
         /// <summary>
         /// Id родительского комментария в ветке

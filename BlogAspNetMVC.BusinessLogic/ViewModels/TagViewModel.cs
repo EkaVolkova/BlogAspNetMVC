@@ -22,5 +22,6 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// Навигационное свойство: список id статей по данному тегу
         /// </summary>
         public List<Guid> ArticlesId { get; set; }
+        public List<ArticleViewModel> Articles { get; set; }
     }
 }

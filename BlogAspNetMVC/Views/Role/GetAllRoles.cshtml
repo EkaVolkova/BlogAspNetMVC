@@ -1,0 +1,33 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.RoleViewModel>
+
+@{
+    ViewData["Title"] = "Список ролей";
+}
+
+<h2>Список ролей</h2>
+
+<a href="/Role/CreateNewRole">Добавить роль</a>
+
+@if (Model != null && Model.Any())
+{
+
+    <div class="tag-container">
+        @foreach (var Role in Model)
+        {
+            <div class="tag-box">
+                <div>
+                    <a href="@Url.Action("GetUsersByRole", "Users", new { RoleName = Role.Name })">@Role.Name</a>
+                </div>
+                <div class="article-count">(Пользователей по тегу: @Role.UsersId.Count)</div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных ролей.</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

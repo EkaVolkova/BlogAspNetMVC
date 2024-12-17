@@ -44,6 +44,7 @@ namespace BlogAspNetMVC.Data.Repositories
         {
             //Получаем тег вместе со всеми связанными сущностями
             return await _context.Tags.Include(a => a.Articles)
+                                              .ThenInclude(a => a.Author)
                                               .Where(a => a.Id == guid)
                                               .FirstOrDefaultAsync();
         }

@@ -1,0 +1,37 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.TagViewModel
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+@if (Model != null)
+{
+    <h2 class="h2 text-center">@Model.Name</h2>
+    <hr class="border border-primary border-2">
+
+    <div class="text-justify">
+        @foreach (var article in Model.Articles)
+        {
+            <div class="my-4">
+                <div>
+                    <div class="d-inline-block">Название</div>
+                    <a href="@Url.Action("GetArticleByName", "Article" , new { id="article.Name" })">@article.Name</a>
+                </div>
+                <div>
+                    <div class="d-inline-block">Автор</div>
+                    <a href="@Url.Action($"GetUserById{{article.AuthorId}}", "User", article.AuthorId)">@article.Author.UserName</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

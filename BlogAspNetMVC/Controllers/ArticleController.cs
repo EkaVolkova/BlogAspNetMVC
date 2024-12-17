@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
@@ -14,17 +15,26 @@ namespace BlogAspNetMVC.Controllers
     /// <summary>
     /// Контроллер для работы со статьей
     /// </summary>
-    [AllowAnonymous]
     [Route("[controller]")]
     public class ArticleController : Controller
     {
         readonly IArticleService _articleService;
+        readonly IUserService _userService;
         readonly ILogger<ArticleController> _logger;
 
-        public ArticleController(ILogger<ArticleController> logger, IArticleService articleService)
+        public ArticleController(ILogger<ArticleController> logger, IArticleService articleService, IUserService userService)
         {
             _articleService = articleService;
+            _userService = userService;
             _logger = logger;
+        }
+
+        [Authorize(Roles = "admin, moderator, user")]
+        [HttpGet]
+        [Route("CreateNewArticle")]
+        public IActionResult CreateNewArticle()
+        {
+            return View();
         }
 
         /// <summary>
@@ -32,32 +42,43 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewArticleRequest">Запрос на добавление статьи</param>
         /// <returns></returns>
+        [Authorize(Roles = "admin, moderator, user")]
         [HttpPost]
         [Route("CreateNewArticle")]
         public async Task<IActionResult> CreateNewArticle(
-            [FromBody]
             AddNewArticleRequest addNewArticleRequest)
         {
             try
             {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+                // Десериализуем теги из JSON
+                addNewArticleRequest.DeserializeTags(addNewArticleRequest.TagsJson); // Предполагается, что вы передаете JSON в поле TagsJson
+
+                addNewArticleRequest.AuthorId = user.Id;
+
                 var validator = new AddNewArticleRequestValidation();
                 var validationResult = validator.Validate(addNewArticleRequest);
 
                 if (!validationResult.IsValid)
                 {
+                    _logger.LogError($"Ошибка добавления тега");
+                    ModelState.AddModelError(string.Empty, "Некорректное название.");
                     return BadRequest(validationResult.Errors);
                 }
 
                 var result = await _articleService.AddArticle(addNewArticleRequest);
+                return View(addNewArticleRequest);
 
-                return StatusCode(200, result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления тега {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-
+            return View();
 
         }
 
@@ -140,25 +161,28 @@ namespace BlogAspNetMVC.Controllers
 
         }
 
+
         /// <summary>
         /// Получить все статьи
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
-        [Route("GetAllArticle")]
+        [Route("GetAllArticles")]
         public async Task<IActionResult> GetAllArticles()
         {
             try
             {
                 var result = await _articleService.GetAllArticles();
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
-            }
+                ModelState.AddModelError(string.Empty, ex.Message);
 
+            }
+            return View();
         }
 
         /// <summary>
@@ -190,21 +214,20 @@ namespace BlogAspNetMVC.Controllers
         /// <param name="name">Название статьи</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetArticleByName{name}")]
-        public async Task<IActionResult> GetArticleByName(
-            [FromRoute] string name)
+        [Route("GetArticleByName")]
+        public async Task<IActionResult> GetArticleByName(string name)
         {
             try
             {
                 var result = await _articleService.GetArticleByName(name);
-
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения статьи {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
+            return View();
         }
 
         /// <summary>

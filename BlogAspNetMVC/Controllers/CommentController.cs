@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
@@ -15,11 +16,20 @@ namespace BlogAspNetMVC.Controllers
     {
         readonly ICommentService _commentService;
         private readonly ILogger<CommentController> _logger;
+        readonly IUserService _userService;
 
-        public CommentController(ILogger<CommentController> logger, ICommentService commentService)
+        public CommentController(ILogger<CommentController> logger, ICommentService commentService, IUserService userService)
         {
             _commentService = commentService;
+            _userService = userService;
             _logger = logger;
+        }
+
+        [HttpGet]
+        [Route("CreateNewComment")]
+        public IActionResult CreateNewComment()
+        {
+            return View();
         }
 
         /// <summary>
@@ -30,11 +40,16 @@ namespace BlogAspNetMVC.Controllers
         [HttpPost]
         [Route("CreateNewComment")]
         public async Task<IActionResult> CreateNewComment(
-            [FromBody]
             AddNewCommentRequest addNewCommentRequest)
         {
             try
             {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                addNewCommentRequest.AuthorId = user.Id;
+
                 var validator = new AddNewCommentRequestValidation();
                 var validationResult = validator.Validate(addNewCommentRequest);
 
@@ -44,12 +59,14 @@ namespace BlogAspNetMVC.Controllers
                 }
                 var result = await _commentService.AddComment(addNewCommentRequest);
 
-                return StatusCode(200, result);
+                return RedirectToAction("GetArticleByName", "Article", new { name = result.Article.Name });
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка входа. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return RedirectToAction("GetArticleById", "Article", addNewCommentRequest.ArticleId);
         }
 
         /// <summary>

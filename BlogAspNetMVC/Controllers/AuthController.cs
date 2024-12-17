@@ -71,7 +71,7 @@ namespace BlogAspNetMVC.Controllers
         [Route("SignIn")]
         public IActionResult SignIn()
         {
-            _logger.LogInformation("Попытка входа в систему");
+            _logger.LogTrace("Открыта вкладка входа");
             return View();
         }
 
@@ -87,6 +87,7 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogInformation("Попытка входа в систему");
                 var validator = new SignInRequestValidation();
                 var validationResult = validator.Validate(request);
 
@@ -104,7 +105,7 @@ namespace BlogAspNetMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ошибка входа. {ex}");
-                ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
+                ModelState.AddModelError(string.Empty, ex.Message);
 
             }
             return View(request);
@@ -115,7 +116,7 @@ namespace BlogAspNetMVC.Controllers
         [Route("SignUp")]
         public IActionResult SignUp()
         {
-            _logger.LogInformation("Попытка зарегестрироваться в системе");
+            _logger.LogTrace("Открыта вкладка регистрации");
             return View();
         }
 
@@ -133,6 +134,7 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogInformation("Попытка зарегестрироваться в системе");
                 var validator = new SignUpRequestValidation();
                 var validationResult = validator.Validate(request);
 
@@ -149,7 +151,7 @@ namespace BlogAspNetMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ошибка входа. {ex}");
-                ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
             return View(request);
 

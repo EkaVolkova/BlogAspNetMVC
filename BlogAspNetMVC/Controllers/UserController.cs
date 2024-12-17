@@ -25,6 +25,11 @@ namespace BlogAspNetMVC.Controllers
             _userService = userService;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         /// <summary>
         /// Изменить пароль
         /// </summary>

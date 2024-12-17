@@ -1,0 +1,49 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.ArticleViewModel>
+
+@{
+    ViewData["Title"] = "Список статей";
+}
+
+<h2>Список статей</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+<a href="/Article/CreateNewArticle">Добавить статью</a>
+
+@if (Model != null && Model.Any())
+{
+    <div class="tag-container">
+        @foreach (var article in Model)
+        {
+            <div class="tag-box">
+                <div>
+                    <a href="@Url.Action("GetArticleByName", "Article", new { name = article.Name })">@article.Name</a>
+                </div>
+                <div class="text-left">
+                    @foreach (var tag in article.Tags)
+                    {
+                    <div class="d-inline-block text-muted">@tag.Name</div>
+                    }
+                </div>
+                <div class="article-count">(Комментариев к статье: @article.CommentsId.Count)</div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных статей.</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
