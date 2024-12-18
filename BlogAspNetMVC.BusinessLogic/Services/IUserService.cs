@@ -46,6 +46,13 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         Task<UserViewModel> ChangeUserName(ChangeUserNameRequest changeUserNameRequest);
 
         /// <summary>
+        /// Изменить пользователя
+        /// </summary>
+        /// <param name="changeUserRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <returns></returns>
+        Task<UserViewModel> ChangeUser(ChangeUserRequest changeUserRequest);
+
+        /// <summary>
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>

@@ -105,6 +105,30 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         }
 
         /// <summary>
+        /// Изменить UserName пользователя
+        /// </summary>
+        /// <param name="changeUserRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <returns></returns>
+        public async Task<UserViewModel> ChangeUser(ChangeUserRequest changeUserRequest)
+        {
+            var user = await _userRepository.GetByUserName(changeUserRequest.OldName);
+            //если пользователь не найден
+            if (user is null)
+            {
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserRequest.OldName} не найден");
+            }
+
+
+            var query = _mapper.Map<ChangeUserRequest, UpdateUserQuery>(changeUserRequest);
+            await _userRepository.UpdateUser(user, query);
+
+            user = await _userRepository.GetByUserName(changeUserRequest.NewName);
+
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return userView;
+        }
+        /// <summary>
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>
