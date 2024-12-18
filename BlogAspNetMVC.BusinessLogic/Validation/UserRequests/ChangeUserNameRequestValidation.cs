@@ -7,9 +7,9 @@ namespace BlogAspNetMVC.BusinessLogic.Validation.UserRequests
     {
         public ChangeUserNameRequestValidation()
         {
-            RuleFor(x => x.OldUserName).NotEmpty();
-            RuleFor(x => x.NewUserName).NotEmpty();
-            RuleFor(x => x.NewUserName).NotEqual(x => x.OldUserName).WithMessage("Имена пользователей должны отличаться");
+            RuleFor(x => x.OldName).NotEmpty();
+            RuleFor(x => x.NewName).NotEmpty();
+            RuleFor(x => x.NewName).NotEqual(x => x.OldName).WithMessage("Имена пользователей должны отличаться");
         }
     }
 }
