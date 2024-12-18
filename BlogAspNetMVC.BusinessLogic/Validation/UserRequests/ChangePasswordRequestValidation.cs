@@ -9,8 +9,8 @@ namespace BlogAspNetMVC.BusinessLogic.Validation.UserRequests
         {
             RuleFor(x => x.UserName).NotEmpty();
             RuleFor(x => x.OldPassword).NotEmpty();
-            RuleFor(x => x.NewPasssword).NotEmpty();
-            RuleFor(x => x.NewPasssword).NotEqual(x => x.OldPassword);
+            RuleFor(x => x.NewPassword).NotEmpty();
+            RuleFor(x => x.NewPassword).NotEqual(x => x.OldPassword);
         }
     }
 }
