@@ -26,16 +26,18 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// <summary>
         /// Навигационное свойство: id авторa комментария
         /// </summary>
-        public Guid AuthorId { get; set; }
+        public UserViewModel Author { get; set; }
+
 
         /// <summary>
         /// Навигационное свойство: идентификатор статьи, к которой оставлен комментарий
         /// </summary>
-        public Guid ArticleId { get; set; }
+        public ArticleViewModel Article { get; set; }
+
 
         /// <summary>
-        /// Id родительского комментария в ветке
+        /// родительский комментария в ветке
         /// </summary>
-        public Guid ParentCommentId { get; set; }
+        public CommentViewModel ParentComment { get; set; }
     }
 }

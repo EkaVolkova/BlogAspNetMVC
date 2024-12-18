@@ -36,15 +36,15 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// <summary>
         /// Навигационное свойство: список всех комментариев пользователя
         /// </summary>
-        public List<Guid> CommentsId { get; set; }
+        public List<CommentViewModel> Comments { get; set; }
 
         /// <summary>
         /// Навигационное свойство: список всех статей, написанных пользователем
         /// </summary>
-        public List<Guid> ArticlesId { get; set; }
+        public List<ArticleViewModel> Articles { get; set; }
 
         /// <summary>
-        /// Навигационное свойство id роли пользователя
+        /// Навигационное свойство название роли пользователя
         /// </summary>
         public string RoleName { get; set; }
 

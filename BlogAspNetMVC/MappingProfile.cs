@@ -59,27 +59,12 @@ namespace BlogAspNetMVC
         private void DbModelToBusinessViewModelCreateMap()
         {
             CreateMap<User, UserViewModel>()
-                           .ForMember(uv => uv.CommentsId,
-                                   opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
-                           .ForMember(uv => uv.ArticlesId,
-                                   opt => opt.MapFrom(src => src.Articles.Select(c => c.Id).ToList()))
                            .ForMember(uv => uv.RoleName,
                                    opt => opt.MapFrom(src => src.Role.Name));
-            CreateMap<Tag, TagViewModel>()
-                .ForMember(tv => tv.ArticlesId, opt => opt.MapFrom(src => src.Articles.Select(a => a.Id)));
-            CreateMap<Article, ArticleViewModel>()
-                .ForMember(av => av.CommentsId,
-                        opt => opt.MapFrom(src => src.Comments.Select(c => c.Id).ToList()))
-                .ForMember(uv => uv.TagsId,
-                        opt => opt.MapFrom(src => src.Tags.Select(t => t.Id).ToList()));
-            CreateMap<Comment, CommentViewModel>()
-                .ForMember(cv => cv.AuthorId,
-                        opt => opt.MapFrom(src => src.Author.Id))
-                .ForMember(cv => cv.ParentCommentId,
-                        opt => opt.MapFrom(src => src.ParentComment.Id));
-            CreateMap<Role, RoleViewModel>()
-                .ForMember(rv => rv.UsersId,
-                        opt => opt.MapFrom(src => src.Users.Select(u => u.Id)));
+            CreateMap<Tag, TagViewModel>();
+            CreateMap<Article, ArticleViewModel>();
+            CreateMap<Comment, CommentViewModel>();
+            CreateMap<Role, RoleViewModel>();
         }
     }
 }

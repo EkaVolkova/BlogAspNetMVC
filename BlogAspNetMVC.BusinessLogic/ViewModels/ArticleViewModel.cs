@@ -31,16 +31,17 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// <summary>
         /// Навигационное свойство: список id тегов к статье
         /// </summary>
-        public List<Guid> TagsId { get; set; }
+        public List<TagViewModel> Tags { get; set; }
 
         /// <summary>
-        /// Навигационное свойство: список id комментариев к статье
+        /// Навигационное свойство: список комментариев к статье
         /// </summary>
-        public List<Guid> CommentsId { get; set; }
+        public List<CommentViewModel> Comments { get; set; }
+
         /// <summary>
         /// Навигационное свойство для идентификатора автора статьи
         /// </summary>
-        public Guid AuthorId { get; set; }
+        public UserViewModel Author { get; set; }
 
     }
 }

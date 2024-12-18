@@ -19,8 +19,8 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         public string Name { get; set; }
 
         /// <summary>
-        /// Список всех Id пользователей с данной ролью
+        /// Список всех пользователей с данной ролью
         /// </summary>
-        public List<Guid> UsersId { get; set; }
+        public List<UserViewModel> Users { get; set; }
     }
 }
