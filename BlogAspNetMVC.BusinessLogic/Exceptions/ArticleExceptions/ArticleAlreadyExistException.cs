@@ -9,7 +9,7 @@ namespace BlogAspNetMVC.BusinessLogic.Exceptions.ArticleExceptions
     /// <summary>
     /// Статья уже существует
     /// </summary>
-    public class ArticleAlreadyExistException : Exception
+    public class ArticleAlreadyExistException : ArgumentException
     {
         public ArticleAlreadyExistException(string message) : base(message)
         {

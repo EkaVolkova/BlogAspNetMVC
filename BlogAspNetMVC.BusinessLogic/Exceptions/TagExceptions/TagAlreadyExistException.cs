@@ -2,7 +2,7 @@
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.TagExceptions
 {
-    public class TagAlreadyExistException : Exception
+    public class TagAlreadyExistException : ArgumentException
     {
         public TagAlreadyExistException(string message) : base(message)
         {

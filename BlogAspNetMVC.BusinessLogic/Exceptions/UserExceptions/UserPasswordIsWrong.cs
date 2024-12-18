@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions
 {
-    public class UserPasswordIsWrong : Exception
+    public class UserPasswordIsWrong : ArgumentException
     {
         public UserPasswordIsWrong(string message) : base(message)
         {

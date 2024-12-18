@@ -2,7 +2,7 @@
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.CommentExceptions
 {
-    public class CommentAlreadyExystException : Exception
+    public class CommentAlreadyExystException : ArgumentException
     {
         public CommentAlreadyExystException(string message) : base(message)
         {

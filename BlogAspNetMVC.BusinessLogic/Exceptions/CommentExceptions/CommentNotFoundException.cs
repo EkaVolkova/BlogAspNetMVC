@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.CommentExceptions
 {
-    public class CommentNotFoundException : Exception
+    public class CommentNotFoundException : ArgumentException
     {
         public CommentNotFoundException(string message) : base(message)
         {

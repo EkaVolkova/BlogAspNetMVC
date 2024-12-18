@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.RoleExceptions
 {
-    public class RoleNotFoundException : Exception
+    public class RoleNotFoundException : ArgumentException
     {
         public RoleNotFoundException(string message) : base(message)
         {
