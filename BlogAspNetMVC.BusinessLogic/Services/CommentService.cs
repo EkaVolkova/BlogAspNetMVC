@@ -41,10 +41,6 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <returns></returns>
         public async Task<CommentViewModel> AddComment(AddNewCommentRequest addNewCommentRequest)
         {
-            var comment = await _commentRepository.GetById(addNewCommentRequest.Guid);
-            //если комментарий не найден
-            if (!(comment is null))
-                throw new CommentNotFoundException($"Комментарий с Id \"{addNewCommentRequest.Guid}\" не найден");
 
             var author = await _userRepository.GetById(addNewCommentRequest.AuthorId);
             if (author is null)
@@ -59,14 +55,16 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             //Если статья не найдена
             if (article is null)
             {
-                throw new ArticleNotFoundException($"Статья с id {addNewCommentRequest.ArtcleId} не найдена");
+                throw new ArticleNotFoundException($"Статья с id {addNewCommentRequest.ArticleId} не найдена");
             }
 
-            comment = _mapper.Map<AddNewCommentRequest, Comment>(addNewCommentRequest);
+            var comment = _mapper.Map<AddNewCommentRequest, Comment>(addNewCommentRequest);
+
+            comment.Article = article;
+            comment.Author = author;
+            comment.ParentComment = parComment;
 
             await _commentRepository.Create(comment, article, author, parComment);
-
-            comment = await _commentRepository.GetById(addNewCommentRequest.Guid);
 
             var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
 

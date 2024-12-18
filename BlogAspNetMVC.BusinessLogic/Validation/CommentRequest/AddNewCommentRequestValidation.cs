@@ -13,7 +13,6 @@ namespace BlogAspNetMVC.BusinessLogic.Validation.CommentRequest
         public AddNewCommentRequestValidation()
         {
             RuleFor(x => x.Text).NotEmpty();
-            RuleFor(x => x.Guid).Must(BeNotDefault).WithMessage("Поле Guid должно быть заполнено");
             RuleFor(x => x.AuthorId).Must(BeNotDefault).WithMessage("Поле AuthorId должно быть заполнено");
             RuleFor(x => x.ArticleId).Must(BeNotDefault).WithMessage("Поле ArtcleId должно быть заполнено");
         }
