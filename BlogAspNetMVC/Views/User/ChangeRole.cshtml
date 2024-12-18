@@ -1,0 +1,29 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.UserRequests.ChangeUserRoleRequest
+
+<h2>Обновление данных</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Некорректное имя пользователя или пароль.
+    </div>
+}
+<form asp-action="ChangeRole" method="post" class="form-horizontal w-50" >
+    <div>
+        <label asp-for="UserName">Имя пользователя</label>
+        <input asp-for="UserName" class="form-control w-50" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="NewRoleName">Email</label>
+        <input asp-for="NewRoleName" class="form-control w-50" />
+        <span asp-validation-for="NewRoleName" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-primary mt-2" id="submitBtn">Войти</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

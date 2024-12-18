@@ -1,6 +1,6 @@
 ﻿@model BlogAspNetMVC.BusinessLogic.Requests.RoleRequest.AddNewRoleRequest
 
-<h2>Добавление тега</h2>
+<h2>Добавление роли</h2>
 
 @if (!ViewData.ModelState.IsValid)
 {
@@ -11,14 +11,14 @@
 
 <form asp-action="CreateNewRole" method="post">
     <div class="form-group">
-        <label asp-for="Name">Название тега</label>
+        <label asp-for="Name">Название роли</label>
         <input asp-for="Name" class="form-control w-50" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <button class="btn btn-primary mt-2" type="submit">Добавить</button>
 </form>
 
-<a href="/Role/GetAllRoles">Перейти к списку всех тегов</a>
+<a href="/Role/GetAllRoles">Перейти к списку всех ролей</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

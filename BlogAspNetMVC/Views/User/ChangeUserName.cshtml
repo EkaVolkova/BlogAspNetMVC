@@ -1,0 +1,22 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.UserRequests.ChangeUserNameRequest
+
+<h2>Обновление данных</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Некорректное имя пользователя или пароль.
+    </div>
+}
+<form asp-action="ChangeUserName" method="post" class="form-horizontal w-50" >
+    <div>
+        <label asp-for="NewName">Имя пользователя</label>
+        <input asp-for="NewName" class="form-control w-50" />
+        <span asp-validation-for="NewName" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary mt-2" id="submitBtn">Войти</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

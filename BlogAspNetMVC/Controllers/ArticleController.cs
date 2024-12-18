@@ -29,7 +29,7 @@ namespace BlogAspNetMVC.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpGet]
         [Route("CreateNewArticle")]
         public IActionResult CreateNewArticle()
@@ -42,7 +42,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewArticleRequest">Запрос на добавление статьи</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpPost]
         [Route("CreateNewArticle")]
         public async Task<IActionResult> CreateNewArticle(
@@ -63,8 +63,8 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    _logger.LogError($"Ошибка добавления тега");
-                    ModelState.AddModelError(string.Empty, "Некорректное название.");
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
                     return BadRequest(validationResult.Errors);
                 }
 
@@ -87,7 +87,8 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeArticleRequest">Запрос на редактирование статьи</param>
         /// <returns></returns>
-        [HttpPut]
+        [Authorize]
+        [HttpPost]
         [Route("ChangeArticle")]
         public async Task<IActionResult> ChangeArticle(
             [FromBody]
@@ -100,7 +101,10 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
+
                 }
 
                 var result = await _articleService.ChangeArticle(changeArticleRequest);
@@ -119,6 +123,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete]
         [Route("DeleteArticle{guid}")]
         public async Task<IActionResult> DeleteArticle(
@@ -143,6 +148,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="name">название статьи</param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete]
         [Route("DeleteArticle{name}")]
         public async Task<IActionResult> DeleteArticle(
@@ -190,6 +196,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор статьи</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetArticleById{guid}")]
         public async Task<IActionResult> GetArticleById(
@@ -213,6 +220,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="name">Название статьи</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetArticleByName")]
         public async Task<IActionResult> GetArticleByName(string name)
@@ -235,6 +243,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="guid">Идентификатор автора</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetArticlesByAuthorId{guid}")]
         public async Task<IActionResult> GetArticlesByAuthorId(
@@ -258,8 +267,9 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="name">UserName автора</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
-        [Route("GetArticlesByAuthorUserName{name}")]
+        [Route("GetArticlesByAuthorUserName")]
         public async Task<IActionResult> GetArticlesByAuthorUserName(
             [FromRoute] string name)
         {

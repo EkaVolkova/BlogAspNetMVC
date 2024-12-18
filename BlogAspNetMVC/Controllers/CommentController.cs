@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
 {
-    [Authorize(Roles = "admin, moderator, user")]//доступ к комментариям только для авторизованных пользователей
+    [Authorize]//доступ к комментариям только для авторизованных пользователей
     [Route("[controller]")]
     public class CommentController : Controller
     {
@@ -55,7 +55,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _commentService.AddComment(addNewCommentRequest);
 
@@ -74,7 +76,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeCommentRequest">Запрос на изменение комментария</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeComment")]
         public async Task<IActionResult> ChangeComment(
             [FromBody]
@@ -87,7 +89,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
 
                 var result = await _commentService.ChangeComment(changeCommentRequest);

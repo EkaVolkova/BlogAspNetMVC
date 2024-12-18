@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.UserExceptions
 {
-    public class UserNotFoundException : Exception
+    public class UserNotFoundException : ArgumentException
     {
         public UserNotFoundException(string message) : base(message)
         {

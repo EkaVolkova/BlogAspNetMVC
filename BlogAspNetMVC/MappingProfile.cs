@@ -45,6 +45,7 @@ namespace BlogAspNetMVC
         /// </summary>
         private void RequestToDbQueryCreateMap()
         {
+            CreateMap<ChangeUserRequest, UpdateUserQuery>();
             CreateMap<ChangeUserNameRequest, UpdateUserQuery>();
             CreateMap<ChangePasswordRequest, UpdateUserQuery>();
             CreateMap<ChangeArticleRequest, UpdateArticleQuery>();

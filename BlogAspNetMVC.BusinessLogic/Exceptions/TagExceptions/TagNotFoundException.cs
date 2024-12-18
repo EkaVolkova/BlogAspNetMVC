@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.TagExceptions
 {
-    public class TagNotFoundException : Exception
+    public class TagNotFoundException : ArgumentException
     {
         public TagNotFoundException(string message) : base(message)
         {

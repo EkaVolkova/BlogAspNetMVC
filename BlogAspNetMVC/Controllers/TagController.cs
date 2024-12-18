@@ -36,7 +36,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewTagRequest">Модель запроса на добавление тега</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator")]
+        [Authorize]
         [HttpPost]
         [Route("CreateNewTag")]
         public async Task<IActionResult> CreateNewTag(
@@ -49,7 +49,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка добавления тега {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _tagService.AddTag(addNewTagRequest);
                 
@@ -69,7 +71,7 @@ namespace BlogAspNetMVC.Controllers
         /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
         /// <returns></returns>
         [Authorize(Roles = "admin, moderator")]
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeTag")]
         public async Task<IActionResult> ChangeTag(
             [FromBody]
@@ -82,7 +84,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _tagService.ChangeTag(changeTagRequest);
 

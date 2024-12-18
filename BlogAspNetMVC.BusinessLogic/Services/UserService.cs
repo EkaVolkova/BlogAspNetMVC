@@ -86,24 +86,48 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <returns></returns>
         public async Task<UserViewModel> ChangeUserName(ChangeUserNameRequest changeUserNameRequest)
         {
-            var user = await _userRepository.GetByUserName(changeUserNameRequest.OldUserName);
+            var user = await _userRepository.GetByUserName(changeUserNameRequest.OldName);
             //если пользователь не найден
             if (user is null)
             {
-                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserNameRequest.OldUserName} не найден");
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserNameRequest.OldName} не найден");
             }
 
 
             var query = _mapper.Map<ChangeUserNameRequest, UpdateUserQuery>(changeUserNameRequest);
             await _userRepository.UpdateUser(user, query);
 
-            user = await _userRepository.GetByUserName(changeUserNameRequest.NewUserName);
+            user = await _userRepository.GetByUserName(changeUserNameRequest.NewName);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
             return userView;
         }
 
+        /// <summary>
+        /// Изменить UserName пользователя
+        /// </summary>
+        /// <param name="changeUserRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <returns></returns>
+        public async Task<UserViewModel> ChangeUser(ChangeUserRequest changeUserRequest)
+        {
+            var user = await _userRepository.GetByUserName(changeUserRequest.OldName);
+            //если пользователь не найден
+            if (user is null)
+            {
+                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserRequest.OldName} не найден");
+            }
+
+
+            var query = _mapper.Map<ChangeUserRequest, UpdateUserQuery>(changeUserRequest);
+            await _userRepository.UpdateUser(user, query);
+
+            user = await _userRepository.GetByUserName(changeUserRequest.NewName);
+
+            var userView = _mapper.Map<User, UserViewModel>(user);
+
+            return userView;
+        }
         /// <summary>
         /// Получить список всех пользователей
         /// </summary>

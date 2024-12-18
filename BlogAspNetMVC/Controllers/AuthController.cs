@@ -63,14 +63,25 @@ namespace BlogAspNetMVC.Controllers
         }
 
         /// <summary>
+        /// Функция отмены аутентификации
+        /// </summary>
+        /// <returns></returns>
+        private async Task AuthentCanselAsync()
+        {
+            await HttpContext.SignOutAsync();
+        }
+
+        /// <summary>
         /// Вход пользователя
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("SignIn")]
-        public IActionResult SignIn()
+        public async Task<IActionResult> SignIn()
         {
+            //Выходим, если до этого был совершен вход
+            await AuthentCanselAsync();
             _logger.LogTrace("Открыта вкладка входа");
             return View();
         }
@@ -93,8 +104,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
                     ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
-                    return BadRequest(validationResult.Errors);
+                    return View();
                 }
                 var result = await _userService.SignIn(request);
                 await AuthentAsync(result);
@@ -140,8 +152,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
                     ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
-                    return BadRequest(validationResult.Errors);
+                    return View();
                 }
                 var result = await _userService.SignUp(request);
                 await AuthentAsync(result);
@@ -153,7 +166,7 @@ namespace BlogAspNetMVC.Controllers
                 _logger.LogError($"Ошибка входа. {ex}");
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
-            return View(request);
+            return View();
 
         }
 

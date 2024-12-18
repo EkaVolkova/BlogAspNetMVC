@@ -30,37 +30,115 @@ namespace BlogAspNetMVC.Controllers
             return View();
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("ChangeUser")]
+        public IActionResult ChangeUser()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Обновить пользователя
+        /// </summary>
+        /// <param name="request">Запрос на обновление пользователя</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        [Route("ChangeUser")]
+        public async Task<IActionResult> ChangeUser(ChangeUserRequest request)
+        {
+            try
+            {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                request.OldName = user.UserName;
+
+                var validator = new ChangeUserRequestValidation();
+                var validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+
+                    return View();
+                }
+                var result = await _userService.ChangeUser(request);
+                // После успешного обновления пользователя, выполните вход
+                return RedirectToAction("SignIn", "Auth");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ошибка изменения пользователя. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(ModelState);
+
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("ChangePassword")]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
         /// <summary>
         /// Изменить пароль
         /// </summary>
         /// <param name="request">Модель запроса на изменение пароля</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
-        [HttpPut]
+        [Authorize]
+        [HttpPost]
         [Route("ChangePassword")]
         public async Task<IActionResult> ChangePassword(
-            [FromBody] // Атрибут, указывающий, откуда брать значение объекта
             ChangePasswordRequest request // Объект запроса
 )
         {
             try
             {
+
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                request.UserName = user.UserName;
+
                 var validator = new ChangePasswordRequestValidation();
                 var validationResult = validator.Validate(request);
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _userService.ChangePassword(request);
 
-                return StatusCode(200, result);
+                //Здесь нужен повторный вход
+                return RedirectToAction("SignIn", "Auth");
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка изменения пользователя. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
 
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("ChangeUserName")]
+        public IActionResult ChangeUserName()
+        {
+            return View();
         }
 
         /// <summary>
@@ -68,39 +146,48 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="request">Модель запроса на изменение UserName</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
-        [HttpPut]
+        [Authorize]
+        [HttpPost]
         [Route("ChangeUserName")]
         public async Task<IActionResult> ChangeUserName(
-           [FromBody] // Атрибут, указывающий, откуда брать значение объекта
             ChangeUserNameRequest request // Объект запроса
 )
         {
             try
             {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                request.OldName = user.UserName;
+
                 var validator = new ChangeUserNameRequestValidation();
                 var validationResult = validator.Validate(request);
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+
+                    return View();
                 }
                 var result = await _userService.ChangeUserName(request);
-
-                return StatusCode(200, result);
+                //Здесь нужен повторный вход
+                return RedirectToAction("SignIn", "Auth");
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка изменения пользователя. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
+            return View();
         }
 
         /// <summary>
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpGet]
         [Route("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
@@ -122,7 +209,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpGet]
         [Route("GetUserById{id}")]
         public async Task<IActionResult> GetUserById(

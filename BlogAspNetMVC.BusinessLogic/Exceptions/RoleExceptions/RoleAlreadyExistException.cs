@@ -2,7 +2,7 @@
 
 namespace BlogAspNetMVC.BusinessLogic.Exceptions.RoleExceptions
 {
-    public class RoleAlreadyExistException : Exception
+    public class RoleAlreadyExistException : ArgumentException
     {
         public RoleAlreadyExistException(string message) : base(message)
         {

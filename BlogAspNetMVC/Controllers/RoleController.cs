@@ -58,7 +58,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _roleService.AddRole(addNewRoleRequest);
 
@@ -77,7 +79,7 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeRoleRequest">Модель запроса на обновление роли</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeRole")]
         public async Task<IActionResult> ChangeRole(
             [FromBody]
@@ -90,7 +92,9 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _roleService.ChangeRole(changeRoleRequest);
 
