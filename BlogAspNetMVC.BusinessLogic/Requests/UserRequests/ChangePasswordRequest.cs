@@ -9,6 +9,6 @@ namespace BlogAspNetMVC.BusinessLogic.Requests.UserRequests
     {
         public string UserName { get; set; }
         public string OldPassword { get; set; }
-        public string NewPasssword { get; set; }
+        public string NewPassword { get; set; }
     }
 }
