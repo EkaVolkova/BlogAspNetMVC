@@ -55,7 +55,7 @@ namespace BlogAspNetMVC.BusinessLogic.Services
             //Может быть null, его не проверяем
             var parComment = await _commentRepository.GetById(addNewCommentRequest.ParentCommentId);
 
-            var article = await _articleRepository.GetById(addNewCommentRequest.ArtcleId);
+            var article = await _articleRepository.GetById(addNewCommentRequest.ArticleId);
             //Если статья не найдена
             if (article is null)
             {
