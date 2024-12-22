@@ -86,32 +86,18 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить статью
         /// </summary>
-        /// <param name="changeArticleRequest">Модель запроса на обновление статьи</param>
+        /// <param name="articleViewModel">Модель запроса на обновление статьи</param>
         /// <returns></returns>
-        public async Task<ArticleViewModel> ChangeArticle(ChangeArticleRequest changeArticleRequest)
+        public async Task<ArticleViewModel> ChangeArticle(ArticleViewModel articleViewModel)
         {
-            var article = await _articleRepository.GetByName(changeArticleRequest.OldName);
+            var article = await _articleRepository.GetById(articleViewModel.Id);
             //Если статьи не существует, статью нельзя изменить
             if (article is null)
-                throw new ArticleNotFoundException($"Статья с названием {changeArticleRequest.OldName} не найдена");
+                throw new ArticleNotFoundException($"Статья с id {articleViewModel.Id} не найдена");
 
-            List<Tag> tags = new();
+            var tags = _mapper.Map<List<TagViewModel>,List<Tag>>(articleViewModel.Tags);
 
-            if (changeArticleRequest.NewTags.Count > 0)
-            {
-                foreach (var tag in changeArticleRequest.NewTags)
-                {
-                    var tempTag = await _tagRepository.GetByName(tag);
-
-                    //Если тега не существует, статью нельзя изменить
-                    if (tempTag is null)
-                        throw new TagNotFoundException($"Тег c тестом {tag} не найден");
-
-                    tags.Add(tempTag);
-
-                }
-            }
-            var query = _mapper.Map<ChangeArticleRequest, UpdateArticleQuery>(changeArticleRequest);
+            var query = _mapper.Map<ArticleViewModel, UpdateArticleQuery>(articleViewModel);
             query.NewTags = tags;
 
             await _articleRepository.UpdateArticle(article, query);

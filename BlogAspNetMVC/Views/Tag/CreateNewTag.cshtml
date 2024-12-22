@@ -1,0 +1,25 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.TagRequest.AddNewTagRequest
+
+<h2>Добавление тега</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+<form asp-action="CreateNewTag" method="post">
+    <div class="form-group">
+        <label asp-for="Name">Название тега</label>
+        <input asp-for="Name" class="form-control w-50" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary mt-2" type="submit">Добавить</button>
+</form>
+
+<a method="get" asp-controller="Tag" asp-action="GetAllTags" class="mt-2 d-block">Перейти к списку всех тегов</a>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

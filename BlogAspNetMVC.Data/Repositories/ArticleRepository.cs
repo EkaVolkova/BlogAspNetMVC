@@ -82,6 +82,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем статьи вместе со всеми связанными сущностями
             return await _context.Articles.Include(a => a.Author)
                                           .Include(a => a.Comments)
+                                          .ThenInclude(c => c.Author)
                                           .Include(a => a.Tags)
                                           .ToListAsync();
 

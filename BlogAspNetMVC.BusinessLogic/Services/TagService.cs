@@ -51,21 +51,21 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить тег
         /// </summary>
-        /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
+        /// <param name="tagViewModel">Модель запроса на изменение тега</param>
         /// <returns></returns>
-        public async Task<TagViewModel> ChangeTag(ChangeTagRequest changeTagRequest)
+        public async Task<TagViewModel> ChangeTag(TagViewModel tagViewModel)
         {
-            var tag = await _tagRepository.GetByName(changeTagRequest.OldName);
+            var tag = await _tagRepository.GetById(tagViewModel.Id);
             //если тег не найден
             if (tag is null)
-                throw new TagNotFoundException($"Тег с названием \"{changeTagRequest.OldName}\" не найден");
+                throw new TagNotFoundException($"Тег с id \"{tagViewModel.Id}\" не найден");
 
 
-            var query = _mapper.Map<ChangeTagRequest, UpdateTagQuery>(changeTagRequest);
+            var query = _mapper.Map<TagViewModel, UpdateTagQuery>(tagViewModel);
 
             await _tagRepository.UpdateTag(tag, query);
 
-            tag = await _tagRepository.GetByName(changeTagRequest.NewName);
+            tag = await _tagRepository.GetById(tagViewModel.Id);
 
             var tagView = _mapper.Map<Tag, TagViewModel>(tag);
 

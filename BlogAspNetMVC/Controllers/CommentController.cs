@@ -1,25 +1,36 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.CommentRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.BusinessLogic.Validation.CommentRequest;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlogAspNetMVC.Controllers
 {
-    [Authorize(Roles = "admin, moderator, user")]//доступ к комментариям только для авторизованных пользователей
+    [Authorize]//доступ к комментариям только для авторизованных пользователей
     [Route("[controller]")]
     public class CommentController : Controller
     {
         readonly ICommentService _commentService;
         private readonly ILogger<CommentController> _logger;
+        readonly IUserService _userService;
 
-        public CommentController(ILogger<CommentController> logger, ICommentService commentService)
+        public CommentController(ILogger<CommentController> logger, ICommentService commentService, IUserService userService)
         {
             _commentService = commentService;
+            _userService = userService;
             _logger = logger;
+        }
+
+        [HttpGet]
+        [Route("CreateNewComment")]
+        public IActionResult CreateNewComment()
+        {
+            return View();
         }
 
         /// <summary>
@@ -30,26 +41,35 @@ namespace BlogAspNetMVC.Controllers
         [HttpPost]
         [Route("CreateNewComment")]
         public async Task<IActionResult> CreateNewComment(
-            [FromBody]
             AddNewCommentRequest addNewCommentRequest)
         {
             try
             {
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
+
+                var user = await _userService.GetByUserName(userName);
+
+                addNewCommentRequest.AuthorId = user.Id;
+
                 var validator = new AddNewCommentRequestValidation();
                 var validationResult = validator.Validate(addNewCommentRequest);
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _commentService.AddComment(addNewCommentRequest);
 
-                return StatusCode(200, result);
+                return RedirectToAction("GetArticleByName", "Article", new { name = result.Article.Name });
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка входа. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return RedirectToAction("GetArticleById", "Article", addNewCommentRequest.ArticleId);
         }
 
         /// <summary>
@@ -57,30 +77,24 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeCommentRequest">Запрос на изменение комментария</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeComment")]
         public async Task<IActionResult> ChangeComment(
-            [FromBody]
-            ChangeCommentRequest changeCommentRequest)
+            CommentViewModel commentViewModel)
         {
             try
             {
-                var validator = new ChangeCommentRequestValidation();
-                var validationResult = validator.Validate(changeCommentRequest);
 
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                var result = await _commentService.ChangeComment(commentViewModel);
 
-                var result = await _commentService.ChangeComment(changeCommentRequest);
-
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка изменения комментария {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
         /// <summary>

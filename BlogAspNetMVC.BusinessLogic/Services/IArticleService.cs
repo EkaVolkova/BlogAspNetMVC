@@ -20,9 +20,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить статью
         /// </summary>
-        /// <param name="changeArticleRequest">Модель запроса на обновление статьи</param>
+        /// <param name="articleViewModel">Модель запроса на обновление статьи</param>
         /// <returns></returns>
-        Task<ArticleViewModel> ChangeArticle(ChangeArticleRequest changeArticleRequest);
+        Task<ArticleViewModel> ChangeArticle(ArticleViewModel articleViewModel);
 
         /// <summary>
         /// Изменить теги

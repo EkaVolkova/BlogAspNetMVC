@@ -1,0 +1,46 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.CommentViewModel
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+@if (Model != null)
+{
+    <h2 class="h2 text-center">@Model.Text</h2>
+    <hr class="border border-primary border-2">
+    <div class="my-4">
+        <div>
+            <div class="d-inline-block">Автор комментария</div>
+            <a method="get" asp-controller="User" asp-action="GetUserById" asp-route-id="@Model.Author.Id" class="mt-2 d-block">@Model.Author.UserName</a>
+        </div>
+
+        <div>
+            <div class="d-inline-block">Название</div>
+            <a method="get" asp-controller="Article" asp-action="GetArticleByName" asp-route-id="@Model.Article.Name" class="mt-2 d-block">@Model.Article.Name</a>
+
+        </div>
+        <div>
+            <div class="d-inline-block">Автор</div>
+            <a method="get" asp-controller="User" asp-action="GetUserById" asp-route-id="@Model.Article.Author.Id" class="mt-2 d-block">@Model.Article.Author.UserName</a>
+        </div>
+    </div>
+
+    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.Identity?.Name == Model.Author.UserName)
+    {
+        <div class="my-4">
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Comment" asp-action="DeleteComment" asp-route-id="@Model.Id">Удалить</a>
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Comment" asp-action="ChangeComment" asp-route-id="@Model.Id">Изменить</a>
+        </div>
+    }
+
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

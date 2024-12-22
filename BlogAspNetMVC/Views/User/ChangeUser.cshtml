@@ -1,0 +1,40 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "Изменение пользователя";
+}
+
+<h2>Изменение пользователя</h2>
+
+<form asp-action="ChangeUser" method="post" class="form-horizontal w-50">
+
+    <div class="form-group">
+        <label asp-for="UserName" class="control-label col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="UserName" class="form-control" placeholder="Новое имя пользователя" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password" class="control-label col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="Password" type="password" class="form-control" placeholder="Новый пароль" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="control-label col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="Email" type="email" class="form-control" placeholder="Новый Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-primary">Изменить</button>
+        </div>
+    </div>
+</form>

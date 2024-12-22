@@ -19,9 +19,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить тег
         /// </summary>
-        /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
+        /// <param name="tagViewModel">Модель запроса на изменение тега</param>
         /// <returns></returns>
-        Task<TagViewModel> ChangeTag(ChangeTagRequest changeTagRequest);
+        Task<TagViewModel> ChangeTag(TagViewModel tagViewModel);
         
         /// <summary>
         /// Удалить тег

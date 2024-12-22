@@ -47,6 +47,7 @@ namespace BlogAspNetMVC.Data.Repositories
             //Получаем комментарий вместе со всеми связанными сущностями
             return await _context.Comments.Include(a => a.Author)
                                               .Include(a => a.Article)
+                                              .ThenInclude(art => art.Comments)
                                               .Include(a => a.ParentComment)
                                               .Where(a => a.Id == guid)
                                               .FirstOrDefaultAsync();

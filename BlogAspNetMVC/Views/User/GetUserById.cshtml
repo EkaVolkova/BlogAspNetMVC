@@ -1,0 +1,67 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.UserViewModel
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+@if (Model != null)
+{
+    <h2 class="h2 text-center">@Model.UserName</h2>
+    <hr class="border border-primary border-2">
+    <div class="lead">
+        Статьи
+    </div>
+
+    @if (Model.Articles != null && Model.Articles.Any())
+    {
+        <div class="text-justify">
+            @foreach (var article in Model.Articles)
+            {
+                <div class="my-4">
+                    <div>
+                        <a method="get" asp-controller="Article" asp-action="GetArticleByName" asp-route-name="@article.Name" class="mt-2 d-block">@article.Name</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Нет доступных статей</div>
+
+    }
+    <hr class="border border-primary border-2">
+    <div class="lead">
+        Комментарии
+    </div>
+
+    @if (Model.Comments != null && Model.Comments.Any())
+    {
+        <div class="text-justify">
+            @foreach (var comment in Model.Comments)
+            {
+                <div class="my-4">
+                    <div>
+                        <a method="get" asp-controller="Comment" asp-action="GetCommentById" asp-route-id="@comment.Id" class="mt-2 d-block">@comment.Text</a>
+                        <a method="get" asp-controller="Article" asp-action="GetArticleByName" asp-route-id="@comment.Article.Name" class="mt-2 d-block text-right text-muted">@comment.Article.Name</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Нет доступных комментариев</div>
+
+    }
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

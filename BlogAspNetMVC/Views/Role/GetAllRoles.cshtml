@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.RoleViewModel>
+
+@{
+    ViewData["Title"] = "Список ролей";
+}
+
+<h2>Список ролей</h2>
+
+<a method="get" asp-controller="Role" asp-action="CreateNewRole" class="mt-2 d-block">Добавить роль</a>
+
+@if (Model != null && Model.Any())
+{
+
+    <div class="tag-container">
+        @foreach (var role in Model)
+        {
+        <div class="gray-box">
+            <div>
+                <a method="get" asp-controller="Role" asp-action="GetRoleById" asp-route-id="@role.Id" class="mt-2 d-block">@role.Name</a>
+            </div>
+            <div class="text-muted text-right">(Пользователей по роли: @role.Users.Count)</div>
+            @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+            {
+                <div>
+                    <a class="btn btn-secondary mt-2" method="get" asp-controller="Role" asp-action="DeleteRole" asp-route-id="@role.Id">Удалить</a>
+                    <a class="btn btn-secondary mt-2" method="get" asp-controller="Role" asp-action="ChangeRole" asp-route-id="@role.Id">Изменить</a>
+                </div>
+            }
+
+        </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных ролей</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
