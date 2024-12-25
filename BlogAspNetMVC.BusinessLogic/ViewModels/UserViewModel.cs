@@ -46,7 +46,8 @@ namespace BlogAspNetMVC.BusinessLogic.ViewModels
         /// <summary>
         /// Навигационное свойство название роли пользователя
         /// </summary>
-        public string RoleName { get; set; }
+        public RoleViewModel Role { get; set; }
+
 
     }
 }
