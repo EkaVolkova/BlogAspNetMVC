@@ -19,9 +19,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить комментарий
         /// </summary>
-        /// <param name="changeCommentRequest">Модель запроса на изменение комментария</param>
+        /// <param name="commentViewModel">Модель запроса на изменение комментария</param>
         /// <returns></returns>
-        Task<CommentViewModel> ChangeComment(ChangeCommentRequest changeCommentRequest);
+        Task<CommentViewModel> ChangeComment(CommentViewModel commentViewModel);
 
         /// <summary>
         /// Удалить комментарий

@@ -74,20 +74,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить комментарий
         /// </summary>
-        /// <param name="changeCommentRequest">Модель запроса на изменение комментария</param>
+        /// <param name="commentViewModel">Модель запроса на изменение комментария</param>
         /// <returns></returns>
-        public async Task<CommentViewModel> ChangeComment(ChangeCommentRequest changeCommentRequest)
+        public async Task<CommentViewModel> ChangeComment(CommentViewModel commentViewModel)
         {
-            var comment = await _commentRepository.GetById(changeCommentRequest.Id);
+            var comment = await _commentRepository.GetById(commentViewModel.Id);
             //Если комментарий не найден
             if (comment is null)
-                throw new CommentNotFoundException($"Комментарий с Id \"{changeCommentRequest.Id}\" не найден");
+                throw new CommentNotFoundException($"Комментарий с Id \"{commentViewModel.Id}\" не найден");
 
 
-            var query = _mapper.Map<ChangeCommentRequest, UpdateCommentQuery>(changeCommentRequest);
+            var query = _mapper.Map<CommentViewModel, UpdateCommentQuery>(commentViewModel);
             await _commentRepository.UpdateComment(comment, query);
 
-            comment = await _commentRepository.GetById(changeCommentRequest.Id);
+            comment = await _commentRepository.GetById(commentViewModel.Id);
 
             var commentView = _mapper.Map<Comment, CommentViewModel>(comment);
 

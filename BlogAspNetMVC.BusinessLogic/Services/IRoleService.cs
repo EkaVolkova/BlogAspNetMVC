@@ -21,9 +21,9 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить роль пользователя
         /// </summary>
-        /// <param name="changeRoleRequest">Запрос на изменение роли пользователя</param>
+        /// <param name="roleViewModel">Запрос на изменение роли пользователя</param>
         /// <returns></returns>
-        Task<RoleViewModel> ChangeRole(ChangeRoleRequest changeRoleRequest);
+        Task<RoleViewModel> ChangeRole(RoleViewModel roleViewModel);
 
         /// <summary>
         /// Удалить роль пользователя

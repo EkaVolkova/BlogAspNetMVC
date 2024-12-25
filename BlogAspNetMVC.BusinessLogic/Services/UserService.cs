@@ -27,22 +27,22 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить роль
         /// </summary>
-        /// <param name="changeUserRoleRequest">Модель запроса на изменение роли</param>
+        /// <param name="userViewModel">Модель запроса на изменение роли</param>
         /// <returns></returns>
-        public async Task<UserViewModel> ChangeRole(ChangeUserRoleRequest changeUserRoleRequest)
+        public async Task<UserViewModel> ChangeRole(UserViewModel userViewModel)
         {
-            var user = await _userRepository.GetByUserName(changeUserRoleRequest.UserName);
+            var user = await _userRepository.GetByUserName(userViewModel.UserName);
             //если пользователь не найден
             if (user is null)
             {
-                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserRoleRequest.UserName} не найден");
+                throw new UserNotFoundException($"Пользователь с именем пользователя {userViewModel.UserName} не найден");
             }
 
-            var query = _mapper.Map<ChangeUserRoleRequest, UpdateUserQuery>(changeUserRoleRequest);
+            var query = _mapper.Map<UserViewModel, UpdateUserQuery>(userViewModel);
 
             await _userRepository.UpdateUser(user, query);
 
-            user = await _userRepository.GetByUserName(changeUserRoleRequest.UserName);
+            user = await _userRepository.GetByUserName(userViewModel.UserName);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
@@ -52,27 +52,22 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить пароль пользователя
         /// </summary>
-        /// <param name="changePasswordRequest">Модель запроса на обновление пароля пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление пароля пользователя</param>
         /// <returns></returns>
-        public async Task<UserViewModel> ChangePassword(ChangePasswordRequest changePasswordRequest)
+        public async Task<UserViewModel> ChangePassword(UserViewModel userViewModel)
         {
-            var user = await _userRepository.GetByUserName(changePasswordRequest.UserName);
+            var user = await _userRepository.GetByUserName(userViewModel.UserName);
             //если пользователь не найден
             if (user is null)
             {
-                throw new UserNotFoundException($"Пользователь с именем пользователя {changePasswordRequest.UserName} не найден");
+                throw new UserNotFoundException($"Пользователь с именем пользователя {userViewModel.UserName} не найден");
             }
 
-            if (user.Password != changePasswordRequest.OldPassword)
-            {
-                throw new UserPasswordIsWrong("Неверный пароль");
-            }
-
-            var query = _mapper.Map<ChangePasswordRequest, UpdateUserQuery>(changePasswordRequest);
+            var query = _mapper.Map<UserViewModel, UpdateUserQuery>(userViewModel);
 
             await _userRepository.UpdateUser(user, query);
 
-            user = await _userRepository.GetByUserName(changePasswordRequest.UserName);
+            user = await _userRepository.GetByUserName(userViewModel.UserName);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
@@ -82,22 +77,22 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить UserName пользователя
         /// </summary>
-        /// <param name="changeUserNameRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление UserName пользователя</param>
         /// <returns></returns>
-        public async Task<UserViewModel> ChangeUserName(ChangeUserNameRequest changeUserNameRequest)
+        public async Task<UserViewModel> ChangeUserName(UserViewModel userViewModel)
         {
-            var user = await _userRepository.GetByUserName(changeUserNameRequest.OldName);
+            var user = await _userRepository.GetById(userViewModel.Id);
             //если пользователь не найден
             if (user is null)
             {
-                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserNameRequest.OldName} не найден");
+                throw new UserNotFoundException($"Пользователь с id {userViewModel.Id} не найден");
             }
 
 
-            var query = _mapper.Map<ChangeUserNameRequest, UpdateUserQuery>(changeUserNameRequest);
+            var query = _mapper.Map<UserViewModel, UpdateUserQuery>(userViewModel);
             await _userRepository.UpdateUser(user, query);
 
-            user = await _userRepository.GetByUserName(changeUserNameRequest.NewName);
+            user = await _userRepository.GetById(userViewModel.Id);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 
@@ -107,22 +102,22 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить UserName пользователя
         /// </summary>
-        /// <param name="changeUserRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление UserName пользователя</param>
         /// <returns></returns>
-        public async Task<UserViewModel> ChangeUser(ChangeUserRequest changeUserRequest)
+        public async Task<UserViewModel> ChangeUser(UserViewModel userViewModel)
         {
-            var user = await _userRepository.GetByUserName(changeUserRequest.OldName);
+            var user = await _userRepository.GetById(userViewModel.Id);
             //если пользователь не найден
             if (user is null)
             {
-                throw new UserNotFoundException($"Пользователь с именем пользователя {changeUserRequest.OldName} не найден");
+                throw new UserNotFoundException($"Пользователь с id {userViewModel.Id} не найден");
             }
 
 
-            var query = _mapper.Map<ChangeUserRequest, UpdateUserQuery>(changeUserRequest);
+            var query = _mapper.Map<UserViewModel, UpdateUserQuery>(userViewModel);
             await _userRepository.UpdateUser(user, query);
 
-            user = await _userRepository.GetByUserName(changeUserRequest.NewName);
+            user = await _userRepository.GetById(userViewModel.Id);
 
             var userView = _mapper.Map<User, UserViewModel>(user);
 

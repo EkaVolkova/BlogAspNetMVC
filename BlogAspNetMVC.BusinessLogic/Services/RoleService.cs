@@ -52,20 +52,20 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить роль пользователя
         /// </summary>
-        /// <param name="changeRoleRequest">Запрос на изменение роли пользователя</param>
+        /// <param name="roleViewModel">Запрос на изменение роли пользователя</param>
         /// <returns></returns>
-        public async Task<RoleViewModel> ChangeRole(ChangeRoleRequest changeRoleRequest)
+        public async Task<RoleViewModel> ChangeRole(RoleViewModel roleViewModel)
         {
-            var role = await _roleRepository.GetByName(changeRoleRequest.OldName);
+            var role = await _roleRepository.GetById(roleViewModel.Id);
             //Если роли не существует
             if (role is null)
-                throw new RoleNotFoundException($"Роль с названием \"{changeRoleRequest.OldName}\" не найдена");
+                throw new RoleNotFoundException($"Роль с id \"{roleViewModel.Id}\" не найдена");
 
 
-            var query = _mapper.Map<ChangeRoleRequest, UpdateRoleQuery>(changeRoleRequest);
+            var query = _mapper.Map<RoleViewModel, UpdateRoleQuery>(roleViewModel);
             await _roleRepository.UpdateRole(role, query);
 
-            role = await _roleRepository.GetByName(changeRoleRequest.NewName);
+            role = await _roleRepository.GetById(roleViewModel.Id);
 
             var roleView = _mapper.Map<Role, RoleViewModel>(role);
 

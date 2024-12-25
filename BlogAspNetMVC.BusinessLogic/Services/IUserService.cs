@@ -27,30 +27,30 @@ namespace BlogAspNetMVC.BusinessLogic.Services
         /// <summary>
         /// Изменить роль
         /// </summary>
-        /// <param name="changeUserRoleRequest">Модель запроса на изменение роли</param>
+        /// <param name="userViewModel">Модель запроса на изменение роли</param>
         /// <returns></returns>
-        Task<UserViewModel> ChangeRole(ChangeUserRoleRequest changeUserRoleRequest);
+        Task<UserViewModel> ChangeRole(UserViewModel userViewModel);
 
         /// <summary>
         /// Изменить пароль пользователя
         /// </summary>
-        /// <param name="changePasswordRequest">Модель запроса на обновление пароля пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление пароля пользователя</param>
         /// <returns></returns>
-        Task<UserViewModel> ChangePassword(ChangePasswordRequest changePasswordRequest);
+        Task<UserViewModel> ChangePassword(UserViewModel userViewModel);
 
         /// <summary>
         /// Изменить UserName пользователя
         /// </summary>
-        /// <param name="changeUserNameRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление UserName пользователя</param>
         /// <returns></returns>
-        Task<UserViewModel> ChangeUserName(ChangeUserNameRequest changeUserNameRequest);
+        Task<UserViewModel> ChangeUserName(UserViewModel userViewModel);
 
         /// <summary>
         /// Изменить пользователя
         /// </summary>
-        /// <param name="changeUserRequest">Модель запроса на обновление UserName пользователя</param>
+        /// <param name="userViewModel">Модель запроса на обновление UserName пользователя</param>
         /// <returns></returns>
-        Task<UserViewModel> ChangeUser(ChangeUserRequest changeUserRequest);
+        Task<UserViewModel> ChangeUser(UserViewModel userViewModel);
 
         /// <summary>
         /// Получить список всех пользователей
