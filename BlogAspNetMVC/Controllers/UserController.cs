@@ -2,6 +2,7 @@
 using BlogAspNetMVC.BusinessLogic.Requests.UserRequests;
 using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.BusinessLogic.Validation.UserRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using BlogAspNetMVC.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,90 +26,129 @@ namespace BlogAspNetMVC.Controllers
             _userService = userService;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("ChangeUser")]
+        public IActionResult ChangeUser(
+            [FromRoute]
+            Guid id)
+
+        {
+            _logger.LogTrace("Открыта вкладка обновления пользователя");
+            var user = _userService.GetById(id);
+            return View(user);
+        }
+
         /// <summary>
-        /// Изменить пароль
+        /// Обновить пользователя
         /// </summary>
-        /// <param name="request">Модель запроса на изменение пароля</param>
+        /// <param name="request">Запрос на обновление пользователя</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
-        [HttpPut]
-        [Route("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(
-            [FromBody] // Атрибут, указывающий, откуда брать значение объекта
-            ChangePasswordRequest request // Объект запроса
-)
+        [Authorize]
+        [HttpPost]
+        [Route("ChangeUser")]
+        public async Task<IActionResult> ChangeUser(UserViewModel request)
         {
             try
             {
-                var validator = new ChangePasswordRequestValidation();
-                var validationResult = validator.Validate(request);
+                _logger.LogInformation("Попытка обновления пользователя");
 
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
-                var result = await _userService.ChangePassword(request);
+                var result = await _userService.ChangeUser(request);
 
-                return StatusCode(200, result);
+                _logger.LogInformation($"Пользователь {result.Id} успешно обновлен");
+
+                // После успешного обновления пользователя, выполните вход
+                return RedirectToAction("SignIn", "Auth");
+
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
-            }
+                _logger.LogError($"Ошибка изменения пользователя. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(request);
 
+            }
+        }
+
+
+        [Authorize(Roles = "admin, moderator")]
+        [HttpGet]
+        [Route("ChangeRole")]
+        public IActionResult ChangeRole(
+            [FromRoute]
+            Guid id)
+        {
+            _logger.LogTrace("Открыта вкладка обновления роли пользователя администратором или модератором");
+            var user = _userService.GetById(id);
+            return View(user);
         }
 
         /// <summary>
         /// Изменить UserName
         /// </summary>
-        /// <param name="request">Модель запроса на изменение UserName</param>
+        /// <param name="userViewModel">Модель запроса на изменение UserName</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
-        [HttpPut]
-        [Route("ChangeUserName")]
-        public async Task<IActionResult> ChangeUserName(
-           [FromBody] // Атрибут, указывающий, откуда брать значение объекта
-            ChangeUserNameRequest request // Объект запроса
+        [Authorize(Roles = "admin, moderator")]
+        [HttpPost]
+        [Route("ChangeRole")]
+        public async Task<IActionResult> ChangeRole(
+            UserViewModel userViewModel // Объект запроса
 )
         {
             try
             {
-                var validator = new ChangeUserNameRequestValidation();
-                var validationResult = validator.Validate(request);
+                var userName = HttpContext.User.Claims.ToList()[0].Value;
 
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
-                var result = await _userService.ChangeUserName(request);
+                var user = await _userService.GetByUserName(userName);
 
-                return StatusCode(200, result);
+                _logger.LogInformation($"Попытка обновления роли пользователя для {userViewModel.UserName} пользователем с ролью {user.Role.Name}");
+
+                var result = await _userService.ChangeRole(userViewModel);
+
+                _logger.LogInformation($"Роль пользователя {result.UserName} успешно обновлена");
+
+                //Здесь нужен повторный вход
+                return RedirectToAction("Home", "Index");
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка изменения пользователя. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
+            return View(userViewModel);
         }
 
         /// <summary>
         /// Получить список всех пользователей
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpGet]
         [Route("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
             {
+                _logger.LogTrace("Открыта вкладка получения списка пользователей");
+                _logger.LogInformation($"Попытка получения списка пользователей");
+
                 var result = await _userService.GetAll();
 
-                return StatusCode(200, result);
+                _logger.LogInformation($"Список пользователей получен");
+
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения списка пользователей. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View();
             }
         }
 
@@ -117,21 +157,26 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator, user")]
+        [Authorize]
         [HttpGet]
-        [Route("GetUserById{id}")]
-        public async Task<IActionResult> GetUserById(
-            [FromRoute] Guid id)
+        [Route("GetUserById")]
+        public async Task<IActionResult> GetUserById(Guid id)
         {
             try
             {
+                _logger.LogTrace("Открыта вкладка получения пользователя по Id");
+                _logger.LogInformation($"Попытка получения пользователя по Id");
+
                 var result = await _userService.GetById(id);
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения пользователя по Id. {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View();
             }
         }
     }

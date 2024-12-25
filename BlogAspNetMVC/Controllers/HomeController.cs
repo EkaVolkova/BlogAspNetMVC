@@ -20,18 +20,59 @@ namespace BlogAspNetMVC.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogTrace("Открыта домашняя страница");
             return View();
         }
 
-        public IActionResult Privacy()
+        //[Route("Home/Error/Default")]
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
+
+        [Route("Home/Error")]
+        [HttpGet]
+        public IActionResult Error(int? statusCode = null)
         {
-            return View();
+            if (statusCode.HasValue)
+            {
+
+                if (statusCode == 401)
+                    return View("Unauthorized");
+
+                if (statusCode == 403)
+
+                    return View("AccessDenied");
+
+                if (statusCode == 404)
+                    return View("NotFound");
+            }
+            return View("InternalServerError");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [Route("Home/Error/403")]
+        public IActionResult Error403()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("AccessDenied");
+        }
+
+        [Route("Home/Error/401")]
+        public IActionResult Error401()
+        {
+            return View("AccessDenied");
+        }
+
+        [Route("Home/Error/404")]
+        public IActionResult Error404()
+        {
+            return View("NotFound");
+        }
+
+        [Route("Home/Error/500")]
+        public IActionResult Error500()
+        {
+            return View("InternalServerError");
         }
     }
 }

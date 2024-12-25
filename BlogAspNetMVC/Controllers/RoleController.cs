@@ -1,6 +1,7 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.RoleRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.BusinessLogic.Validation.RoleRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,29 +32,47 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="addNewRoleRequest">запрос на создание роли</param>
         /// <returns></returns>
+        [HttpGet]
+        [Route("CreateNewRole")]
+        public IActionResult CreateNewRole()
+        {
+            _logger.LogTrace($"Открыта вкладка добавления роли");
+            return View();
+        }
+
+        /// <summary>
+        /// Создать новую роль
+        /// </summary>
+        /// <param name="addNewRoleRequest">запрос на создание роли</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("CreateNewRole")]
         public async Task<IActionResult> CreateNewRole(
-            [FromBody]
+        [FromBody]
             AddNewRoleRequest addNewRoleRequest)
         {
             try
             {
+                _logger.LogInformation($"Попытка добавить роль");
                 var validator = new AddNewRoleRequestValidation();
                 var validationResult = validator.Validate(addNewRoleRequest);
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка валидации {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _roleService.AddRole(addNewRoleRequest);
 
-                return StatusCode(200, result);
+                return View(addNewRoleRequest);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления роли {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
         /// <summary>
@@ -61,29 +80,23 @@ namespace BlogAspNetMVC.Controllers
         /// </summary>
         /// <param name="changeRoleRequest">Модель запроса на обновление роли</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeRole")]
         public async Task<IActionResult> ChangeRole(
-            [FromBody]
-            ChangeRoleRequest changeRoleRequest)
+            RoleViewModel roleViewModel)
         {
             try
             {
-                var validator = new ChangeRoleRequestValidation();
-                var validationResult = validator.Validate(changeRoleRequest);
+                var result = await _roleService.ChangeRole(roleViewModel);
 
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
-                var result = await _roleService.ChangeRole(changeRoleRequest);
-
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка изменения роли {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
         /// <summary>
@@ -118,14 +131,18 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogTrace($"Открыта вкладка получения ролей");
+                _logger.LogInformation($"Попытка получения ролей");
                 var result = await _roleService.GetAllRoles();
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения ролей {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
 
@@ -137,42 +154,25 @@ namespace BlogAspNetMVC.Controllers
         [HttpGet]
         [Route("GetRoleById{guid}")]
         public async Task<IActionResult> GetRoleById(
-            [FromRoute] Guid guid)
+            [FromRoute] Guid id)
         {
             try
             {
-                var result = await _roleService.GetRoleById(guid);
+                _logger.LogTrace($"Открыта вкладка получения роли");
+                _logger.LogInformation($"Попытка получения роль {id}");
 
-                return StatusCode(200, result);
+                var result = await _roleService.GetRoleById(id);
+
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения роли {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
         }
 
-
-        /// <summary>
-        /// Получить список пользователь с выбранной ролью
-        /// </summary>
-        /// <param name="guid">Идентификатор роли</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GetAllUsersByRoleId")]
-        public async Task<IActionResult> GetAllUsersByRoleId(
-            [FromRoute] Guid guid)
-        {
-            try
-            {
-                var result = await _roleService.GetAllUsersByRoleId(guid);
-
-                return StatusCode(200, result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(400, ex.ToString());
-            }
-        }
 
     }
 }

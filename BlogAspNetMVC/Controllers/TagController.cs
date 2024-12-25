@@ -1,6 +1,7 @@
 ﻿using BlogAspNetMVC.BusinessLogic.Requests.TagRequest;
 using BlogAspNetMVC.BusinessLogic.Services;
 using BlogAspNetMVC.BusinessLogic.Validation.TagRequests;
+using BlogAspNetMVC.BusinessLogic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,16 +23,24 @@ namespace BlogAspNetMVC.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "admin, moderator")]
+        [HttpGet]
+        [Route("CreateNewTag")]
+        public IActionResult CreateNewTag()
+        {
+            return View();
+        }
+
+
         /// <summary>
         /// Создать новый тег
         /// </summary>
         /// <param name="addNewTagRequest">Модель запроса на добавление тега</param>
         /// <returns></returns>
-        [Authorize(Roles = "admin, moderator")]
+        [Authorize]
         [HttpPost]
         [Route("CreateNewTag")]
         public async Task<IActionResult> CreateNewTag(
-            [FromBody]
             AddNewTagRequest addNewTagRequest)
         {
             try
@@ -41,17 +50,20 @@ namespace BlogAspNetMVC.Controllers
 
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(validationResult.Errors);
+                    _logger.LogError($"Ошибка добавления тега {validationResult.Errors}");
+                    ModelState.AddModelError(string.Empty, validationResult.Errors.ToString());
+                    return View();
                 }
                 var result = await _tagService.AddTag(addNewTagRequest);
-
-                return StatusCode(200, result);
+                
+                
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка добавления тега {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
+            return View(addNewTagRequest);
         }
 
         /// <summary>
@@ -60,29 +72,24 @@ namespace BlogAspNetMVC.Controllers
         /// <param name="changeTagRequest">Модель запроса на изменение тега</param>
         /// <returns></returns>
         [Authorize(Roles = "admin, moderator")]
-        [HttpPut]
+        [HttpPost]
         [Route("ChangeTag")]
         public async Task<IActionResult> ChangeTag(
             [FromBody]
-            ChangeTagRequest changeTagRequest)
+            TagViewModel tagViewModel)
         {
             try
             {
-                var validator = new ChangeTagRequestValidation();
-                var validationResult = validator.Validate(changeTagRequest);
+                var result = await _tagService.ChangeTag(tagViewModel);
 
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
-                var result = await _tagService.ChangeTag(changeTagRequest);
-
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка обновления тега {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View(tagViewModel);
 
         }
 
@@ -105,8 +112,10 @@ namespace BlogAspNetMVC.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка удаления тега {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+            return View();
 
         }
 
@@ -122,38 +131,41 @@ namespace BlogAspNetMVC.Controllers
             try
             {
                 var result = await _tagService.GetAllTags();
+                return View(result); 
 
-                return StatusCode(200, result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения списка тегов {ex}");
+                ModelState.AddModelError(string.Empty, "Некорректное название.");
             }
-
+            return View();
         }
 
         /// <summary>
         /// Получить тег
         /// </summary>
-        /// <param name="guid">Идентификатор тега</param>
+        /// <param name="id">Идентификатор тега</param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
-        [Route("GetTagById{guid}")]
+        [Route("GetTagById")]
         public async Task<IActionResult> GetTagById(
-            [FromRoute] Guid guid)
+            [FromRoute]
+            Guid id)
         {
             try
             {
-                var result = await _tagService.GetTagById(guid);
+                var result = await _tagService.GetTagById(id);
 
-                return StatusCode(200, result);
+                return View(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex.ToString());
+                _logger.LogError($"Ошибка получения тега {ex}");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
+            return View();
         }
 
         /// <summary>

@@ -40,14 +40,14 @@ namespace BlogAspNetMVC.Controllers
         /// <returns></returns>
         private async Task AuthentAsync(UserViewModel user)
         {
-
+            _logger.LogTrace("Запущен процесс аутентификации");
             //Инициализируем список утверждений проверки подлинности
             var claims = new List<Claim>()
             {
                 //Добавляем одно утверждение с типом по умолчанию и логином пользователя
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
                 //Добавляем одно утверждение с типом роли по умолчанию и ролью
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name)
             };
 
             //Создали объект класса ClaimsIdentity, который реализует интерфейс IIdentity и представляет текущего пользователя
@@ -59,6 +59,19 @@ namespace BlogAspNetMVC.Controllers
 
             //Добавляем в контекст ClaimsPrincipal для работы с авторизацией, который содержит ClaimsIdentity
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            _logger.LogTrace("Завершен процесс аутентификации");
+
+        }
+
+        /// <summary>
+        /// Функция отмены аутентификации
+        /// </summary>
+        /// <returns></returns>
+        private async Task AuthentCanselAsync()
+        {
+            _logger.LogTrace("Запущен процесс сброса аутентификации");
+            await HttpContext.SignOutAsync();
+            _logger.LogTrace("Завершен процесс сброса аутентификации");
 
         }
 
@@ -69,9 +82,11 @@ namespace BlogAspNetMVC.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("SignIn")]
-        public IActionResult SignIn()
+        public async Task<IActionResult> SignIn()
         {
-            _logger.LogInformation("Попытка входа в систему");
+            _logger.LogTrace("Открыта вкладка входа в систему");
+            //Выходим, если до этого был совершен вход
+            await AuthentCanselAsync();
             return View();
         }
 
@@ -87,13 +102,15 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogInformation("Попытка входа в систему");
                 var validator = new SignInRequestValidation();
                 var validationResult = validator.Validate(request);
 
                 if (!validationResult.IsValid)
                 {
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
                     ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
-                    return BadRequest(validationResult.Errors);
+                    return View();
                 }
                 var result = await _userService.SignIn(request);
                 await AuthentAsync(result);
@@ -104,7 +121,7 @@ namespace BlogAspNetMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ошибка входа. {ex}");
-                ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
+                ModelState.AddModelError(string.Empty, ex.Message);
 
             }
             return View(request);
@@ -115,7 +132,7 @@ namespace BlogAspNetMVC.Controllers
         [Route("SignUp")]
         public IActionResult SignUp()
         {
-            _logger.LogInformation("Попытка зарегестрироваться в системе");
+            _logger.LogTrace("Открыта вкладка регистрации");
             return View();
         }
 
@@ -133,25 +150,27 @@ namespace BlogAspNetMVC.Controllers
         {
             try
             {
+                _logger.LogInformation("Попытка зарегестрироваться в системе");
                 var validator = new SignUpRequestValidation();
                 var validationResult = validator.Validate(request);
 
                 if (!validationResult.IsValid)
                 {
+                    _logger.LogError($"Ошибка валидации. {validationResult.Errors}");
                     ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
-                    return BadRequest(validationResult.Errors);
+                    return View();
                 }
                 var result = await _userService.SignUp(request);
                 await AuthentAsync(result);
-
+                _logger.LogInformation($"Пользователь {result.Id} зарегестрирован в системе");
                 return RedirectToAction("Index", "User");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ошибка входа. {ex}");
-                ModelState.AddModelError(string.Empty, "Некорректное имя пользователя или пароль.");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-            return View(request);
+            return View();
 
         }
 
