@@ -85,12 +85,14 @@ namespace BlogAspNetMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
+            
 
             app.UseEndpoints(endpoints =>
             {

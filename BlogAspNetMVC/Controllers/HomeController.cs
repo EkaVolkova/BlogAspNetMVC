@@ -32,47 +32,15 @@ namespace BlogAspNetMVC.Controllers
         //}
 
         [Route("Home/Error")]
-        [HttpGet]
         public IActionResult Error(int? statusCode = null)
         {
-            if (statusCode.HasValue)
+            return statusCode switch
             {
-
-                if (statusCode == 401)
-                    return View("Unauthorized");
-
-                if (statusCode == 403)
-
-                    return View("AccessDenied");
-
-                if (statusCode == 404)
-                    return View("NotFound");
-            }
-            return View("InternalServerError");
-        }
-
-        [Route("Home/Error/403")]
-        public IActionResult Error403()
-        {
-            return View("AccessDenied");
-        }
-
-        [Route("Home/Error/401")]
-        public IActionResult Error401()
-        {
-            return View("AccessDenied");
-        }
-
-        [Route("Home/Error/404")]
-        public IActionResult Error404()
-        {
-            return View("NotFound");
-        }
-
-        [Route("Home/Error/500")]
-        public IActionResult Error500()
-        {
-            return View("InternalServerError");
+                401 => View("Unauthorized"),
+                403 => View("AccessDenied"),
+                404 => View("NotFound"),
+                _ => View("InternalServerError"),
+            };
         }
     }
 }

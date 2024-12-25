@@ -73,7 +73,7 @@ namespace BlogAspNetMVC.Controllers
                 }
 
                 var result = await _articleService.AddArticle(addNewArticleRequest);
-                return RedirectToAction("GetArticleById", "Article", new { guid = result.Id });
+                return RedirectToAction("GetArticleByName", "Article", new { name = result.Name });
 
             }
             catch (Exception ex)
@@ -125,12 +125,12 @@ namespace BlogAspNetMVC.Controllers
         [Authorize]
         [HttpGet]
         [Route("DeleteArticle")]
-        public async Task<IActionResult> DeleteArticle([FromRoute] Guid id, bool confirm = true)
+        public async Task<IActionResult> DeleteArticle(Guid id, bool confirm = true)
         {
-            if (confirm)
+            if(confirm)
                 await DeleteArticle(id);
 
-            return RedirectToAction("GetAllArticle", "Article");
+            return RedirectToAction("GetAllArticles", "Article");
         }
 
         /// <summary>
@@ -142,9 +142,10 @@ namespace BlogAspNetMVC.Controllers
         [HttpDelete]
         [Route("DeleteArticle")]
         public async Task<IActionResult> DeleteArticle(
-            [FromRoute] 
             Guid id)
         {
+            var Model = await _articleService.GetArticleById(id);
+            var i = User.Identity?.Name == Model.Author.UserName;
             try
             {
                 await _articleService.DeleteArticle(id);
