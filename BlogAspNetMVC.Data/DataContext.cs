@@ -41,7 +41,6 @@ namespace BlogAspNetMVC.Data
         /// <param name="options"></param>
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
