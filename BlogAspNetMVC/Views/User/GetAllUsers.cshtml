@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "Список тегов";
+}
+
+<h2>Список пользователей</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="tag-container">
+        @foreach (var user in Model)
+        {
+        <div class="gray-box">
+            <div>
+                <a method="get" asp-controller="User" asp-action="GetUserById" asp-route-id="@user.Id" class="mt-2 d-block">@user.UserName</a>
+            </div>
+            <div>
+                <span class="bg-info rounded-bg">@user.Role.Name</span>
+            </div>
+            @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+            {
+                <div>
+                    <a class="btn btn-secondary mt-2" method="get" asp-controller="User" asp-action="ChangeRole" asp-route-id="@user.Role.Id">Изменить роль&#10;пользователя</a>
+                </div>
+            }
+
+            <div class="text-muted text-left mt-4">@user.Email</div>
+        </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных пользователей</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

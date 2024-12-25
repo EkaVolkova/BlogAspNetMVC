@@ -1,0 +1,85 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.ArticleRequests.AddNewArticleRequest
+
+<h2>Добавление статьи</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+<form asp-action="CreateNewArticle" method="post">
+
+    <div class="form-group">
+        <label asp-for="Name">Название статьи</label>
+        <input asp-for="Name" class="form-control w-50" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Text">Текст статьи</label>
+        <textarea asp-for="Text" class="form-control w-50"></textarea>
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Теги</label>
+        <div id="tagContainer w-50">
+            <input type="text" id="input-tag" class="form-control" placeholder="Введите тег" />
+            <button type="button" id="addTagButton" class="btn btn-secondary">Добавить тег</button>
+        </div>
+
+        <div id="tagsList" class="mt-2"></div> <!-- Контейнер для отображения добавленных тегов -->
+
+        <input type="hidden" asp-for="TagsJson" /> <!-- Скрытый элемент для обновления данных (обновляется с помощью JavaScript) -->
+    </div>
+
+    <button class="btn btn-primary mt-2" type="submit">Добавить</button>
+</form>
+<a method="get" asp-controller="Article" asp-action="GetAllArticles" class="mt-2 d-block">Перейти к списку всех статей</a>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        const tags = [];
+
+        document.getElementById('addTagButton').addEventListener('click', function () {
+            const tagInput = document.getElementById('input-tag');
+            const tagValue = tagInput.value.trim();
+            if (tagValue) {
+                tags.push(tagValue);
+                updateTagsList();
+                tagInput.value = ''; // Очищаем поле ввода
+                updateHiddenInput();
+            }
+        });
+
+        function updateTagsList() {
+            const tagsList = document.getElementById('tagsList');
+            tagsList.innerHTML = ''; // Очищаем текущий список тегов
+
+            tags.forEach((tag, index) => {
+                const tagItem = document.createElement('div');
+                tagItem.className = 'tag-item';
+                tagItem.innerHTML = `
+                        <span>${tag}</span>
+                        <button type="button" class="btn btn-sm" onclick="removeTag(${index})">&#10006;</button>
+                    `;
+                tagsList.appendChild(tagItem);
+            });
+        }
+
+        function removeTag(index) {
+            tags.splice(index, 1); // Удаляем тег из массива
+            updateTagsList(); // Обновляем отображение тегов
+            updateHiddenInput(); // Обновляем скрытое поле
+        }
+
+        function updateHiddenInput() {
+            const hiddenInput = document.querySelector('input[name="TagsJson"]');
+            hiddenInput.value = JSON.stringify(tags); // Сохраняем теги в формате JSON
+        }
+    </script>
+}

@@ -1,0 +1,25 @@
+﻿@model BlogAspNetMVC.BusinessLogic.Requests.RoleRequest.AddNewRoleRequest
+
+<h2>Добавление роли</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+<form asp-action="CreateNewRole" method="post">
+    <div class="form-group">
+        <label asp-for="Name">Название роли</label>
+        <input asp-for="Name" class="form-control w-50" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary mt-2" type="submit">Добавить</button>
+</form>
+<a method="get" asp-controller="Role" asp-action="GetAllRoles" class="mt-2 d-block">Перейти к списку всех ролей</a>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

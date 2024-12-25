@@ -1,0 +1,49 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.RoleViewModel
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+
+@if (Model != null)
+{
+    <h2 class="h2 text-center">@Model.Name</h2>
+    <hr class="border border-primary border-2">
+
+    @if (Model.Users != null && Model.Users.Any())
+    {
+        <div class="text-justify">
+            @foreach (var user in Model.Users)
+            {
+                <div class="my-4">
+                    <div>
+                        <a method="get" asp-controller="User" asp-action="GetUserById" asp-route-id="@user.Id" class="mt-2 d-block">@user.UserName</a>
+                    </div>
+                    <div class="my-2 text-muted">@user.Email</div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Нет пользователей</div>
+
+    }
+    @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+    {
+        <div>
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Role" asp-action="DeleteRole" asp-route-id="@Model.Id">Удалить</a>
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Role" asp-action="ChangeRole" asp-route-id="@Model.Id">Изменить</a>
+        </div>
+    }
+
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

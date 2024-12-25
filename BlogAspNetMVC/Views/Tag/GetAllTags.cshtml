@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.TagViewModel>
+
+@{
+    ViewData["Title"] = "Список тегов";
+}
+
+<h2>Список тегов</h2>
+
+<a method="get" asp-controller="Tag" asp-action="CreateNewTag" class="mt-2 d-block">Добавить тег</a>
+
+@if (Model != null && Model.Any())
+{
+    <div class="tag-container">
+        @foreach (var tag in Model)
+        {
+        <div class="gray-box">
+            <div>
+                <a method="get" asp-controller="Tag" asp-action="GetTagById" asp-route-id="@tag.Id" class="mt-2 d-block">@tag.Id</a>
+            </div>
+            @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+            {
+                <div class="my-4">
+                    <a class="btn btn-secondary mt-2" method="get" asp-controller="Tag" asp-action="DeleteTag" asp-route-id="@tag.Id">Удалить</a>
+                    <a class="btn btn-secondary mt-2" method="get" asp-controller="Tag" asp-action="ChangeTag" asp-route-id="@tag.Id">Изменить</a>
+                </div>
+            }
+
+            <div class="text-muted text-right">(Статей по тегу: @tag.Articles.Count)</div>
+        </div>
+
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных тегов</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

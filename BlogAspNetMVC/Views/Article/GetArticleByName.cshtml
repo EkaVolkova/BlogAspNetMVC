@@ -1,0 +1,67 @@
+﻿@model BlogAspNetMVC.BusinessLogic.ViewModels.ArticleViewModel
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+    </div>
+}
+@if (Model != null)
+{
+    <h2 class="h2 text-center">@Model.Name</h2>
+    <div class="text-left">Автор: @Model.Author.UserName</div>
+    <hr class="border border-primary border-2">
+    <div class="text-justify">@Model.Text</div>
+
+    <div class="text-right">
+        @foreach (var tag in Model.Tags)
+        {
+        <div class="d-inline-block text-muted">
+            <a method="get" asp-controller="Tag" asp-action="GetTagById" asp-route-id="@tag.Id" class="mt-2 d-block">@tag.Name</a>
+
+        </div>
+        }
+    </div>
+    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.Identity?.Name == Model.Author.UserName)
+    {
+        <div>
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Article" asp-action="DeleteArticle" asp-route-id="@Model.Id">Удалить&#10;статью</a>
+            <a class="btn btn-secondary mt-2" method="get" asp-controller="Article" asp-action="ChangeArticle" asp-route-id="@Model.Id">Изменить&#10;статью</a>
+        </div>
+    }
+<div class="my-4">
+    @foreach (var comment in Model.Comments)
+    {
+        <div class="gray-box">
+            <div>@comment.Text</div>
+        </div>
+        <div class="text-right">
+            <div>
+                <span class="bg-info rounded-bg">@comment.Author.UserName</span>
+            </div>
+        </div>
+        @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.Identity?.Name == Model.Author.UserName)
+        {
+            <div>
+                <a class="btn btn-secondary mt-2" method="get" asp-controller="Comment" asp-action="DeleteComment" asp-route-id="@comment.Id">Удалить&#10;комментарий</a>
+                <a class="btn btn-secondary mt-2" method="get" asp-controller="Comment" asp-action="ChangeComment" asp-route-id="@comment.Id">Изменить&#10;комментарий</a>
+            </div>
+        }
+
+    }
+
+</div>
+
+    <!-- Вызов частичного представления для добавления нового комментария -->
+    <div class="text-center my-4">
+        @Html.Partial("~/Views/Comment/CreateNewComment.cshtml", new BlogAspNetMVC.BusinessLogic.Requests.CommentRequest.AddNewCommentRequest { ArticleId = Model.Id })
+    </div>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

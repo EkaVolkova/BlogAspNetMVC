@@ -1,0 +1,57 @@
+﻿@model IEnumerable<BlogAspNetMVC.BusinessLogic.ViewModels.ArticleViewModel>
+
+@{
+    ViewData["Title"] = "Список статей";
+}
+
+<h2>Список статей</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Ошибка!</strong>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+<a method="get" asp-controller="Article" asp-action="CreateNewArticle" class="mt-2 d-block">Добавить статью</a>
+
+@if (Model != null && Model.Any())
+{
+    <div class="tag-container">
+        @foreach (var article in Model)
+        {
+            <div class="gray-box">
+                <div>
+                    <a method="get" asp-controller="Article" asp-action="GetArticleByName" asp-route-name="@article.Name" class="mt-2 d-block">@article.Name</a>
+                </div>
+                <div class="text-left">
+                    @foreach (var tag in article.Tags)
+                    {
+                        <div class="d-inline-block text-muted">@tag.Name</div>
+                    }
+                </div>
+                <div class="text-muted text-right">(Комментариев к статье: @article.Comments.Count)</div>
+                @if (User.IsInRole("admin, moderator") || User.Identity?.Name == article.Author.UserName)
+                {
+                    <div>
+                        <a class="btn btn-primary mt-2 d-inline-block" method="get" asp-controller="Article" asp-action="DeleteArticle" asp-route-id="@article.Id">Удалить</a>
+                        <a class="btn btn-primary mt-2 d-inline-block" method="get" asp-controller="Article" asp-action="ChangeArticle" asp-route-id="@article.Id">Изменить</a>
+                    </div>
+
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Нет доступных статей</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
