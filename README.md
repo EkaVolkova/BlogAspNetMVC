@@ -23,7 +23,7 @@
 ## Используемые технологии
 - Backend: C#, ASP.NET Core, MVC
 - Frontend: JavaScript, Bootstrap
-- База данных: Для хранения данных используется MySQL.
+- База данных: Для доступа к базе данных используется Entity Framework Core. Для хранения данных - SQL Server.
 
 ## Вклад
 
